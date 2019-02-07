@@ -16,17 +16,7 @@ namespace Caldwell.Infrastructure.Repository
         {
             _dbContext = new AlfonsoContext();
         }
-
-        public Task Create(TEntity entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
-
+      
         public IQueryable<TEntity> GetAll()
         {
             return _dbContext.Set<TEntity>().AsNoTracking();
@@ -39,9 +29,23 @@ namespace Caldwell.Infrastructure.Repository
                         .FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public Task Update(int id, TEntity entity)
+        public async Task Create(TEntity entity)
         {
-            throw new NotImplementedException();
+            await _dbContext.Set<TEntity>().AddAsync(entity);
+            await _dbContext.SaveChangesAsync();
         }
+
+        public async Task Update(int id, TEntity entity)
+        {
+            _dbContext.Set<TEntity>().Update(entity);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task Delete(int id)
+        {
+            var entity = await GetById(id);
+            _dbContext.Set<TEntity>().Remove(entity);
+            await _dbContext.SaveChangesAsync();
+        }      
     }
 }
