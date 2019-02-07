@@ -6,7 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Caldwell.Infrastructure\Caldwell.Infrastructure.csproj" />
+    <ProjectReference Include="..\Caldwell.Core\Caldwell.Core.csproj" />
+    <ProjectReference Include="..\Caldwell.Infrastructure\Caldwell.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
