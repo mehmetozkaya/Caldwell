@@ -1,4 +1,5 @@
 ﻿using Caldwell.Core.Repository;
+using Caldwell.Infrastructure.Crawler;
 using Caldwell.Infrastructure.Models;
 using Caldwell.Infrastructure.Repository;
 using System;
@@ -12,9 +13,12 @@ namespace Caldwell.Console
         {
             try
             {
-                CatalogCreator creator = new CatalogCreator();
-                Task create = creator.Create();
-                create.Wait();
+                CaldwellCrawler crawler = new CaldwellCrawler();
+                crawler.ReasonToSolve();
+
+                //CatalogCreator creator = new CatalogCreator();
+                //Task create = creator.Create();
+                //create.Wait();
             }
             catch (Exception exception)
             {

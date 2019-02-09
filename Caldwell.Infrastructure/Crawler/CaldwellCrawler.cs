@@ -1,5 +1,6 @@
 ﻿using Caldwell.Core.Crawler;
 using HtmlAgilityPack;
+using HtmlAgilityPack.CssSelectors.NetCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace Caldwell.Infrastructure.Crawler
         public CaldwellCrawler()
         {
             try
-            {                
+            {
                 HtmlWeb web = new HtmlWeb();
                 _htmlDocument = web.Load(CrawlerConsts.CrawleUrl);
             }
@@ -24,7 +25,35 @@ namespace Caldwell.Infrastructure.Crawler
             }
         }
 
+        public void ReasonToSolve()
+        {
+            var titleNode = _htmlDocument.DocumentNode.SelectSingleNode("//*[@id='ozet']/div[1]/div/h1/a");
 
+            var realTitle = titleNode.InnerText;
+            var title = titleNode.Attributes["title"].Value;
+
+            var mainSpecsNode = _htmlDocument.DocumentNode.SelectSingleNode("//*[@id='oncelikli']");
+            //*[@id="oncelikli"]/div[1]/div[1]/div[1]
+            
+            //# oncelikli > div:nth-child(1) > div:nth-child(1) > div.row.row2
+            var mainSpecValues = mainSpecsNode.QuerySelectorAll("div.row.row2 a");
+            //var node2 = mainSpecsNode.QuerySelector("div.row.row1");
+
+        }
+
+        public void CssReader()
+        {
+            // https://github.com/trenoncourt/HtmlAgilityPack.CssSelectors.NetCore
+
+            var html = @"http://html-agility-pack.net/";
+            // SELECTORS
+            HtmlWeb web = new HtmlWeb();
+            var htmlDoc = web.Load(html);
+
+            IList<HtmlNode> nodes = htmlDoc.QuerySelectorAll("div .my-class[data-attr=123] > ul li");
+            HtmlNode node = nodes[0].QuerySelector("p.with-this-class span[data-myattr]");
+        }
+        
 
         public void Crawle()
         {
