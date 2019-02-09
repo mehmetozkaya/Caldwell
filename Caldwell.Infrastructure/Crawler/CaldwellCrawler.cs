@@ -4,26 +4,51 @@ using HtmlAgilityPack.CssSelectors.NetCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 
 namespace Caldwell.Infrastructure.Crawler
 {
     public class CaldwellCrawler : ICaldwellCrawler
-    {        
-        private readonly HtmlDocument _htmlDocument;
+    {
+        // Crawler Steps -- visual -> https://github.com/dotnetcore/DotnetSpider
+        // Add Downloader
+        // Add Request - Url
+        // Add Processor - BasePageProcessor - hmtl reading
+        // Add EntityType<BaiduSearchEntry>();
+        // Add Pipeline(new ConsoleEntityPipeline()); -- insert db
 
-        public CaldwellCrawler()
+        private readonly HtmlDocument _htmlDocument;
+        private readonly string _crawlUrl;
+
+        public CaldwellCrawler(string crawlUrl)
         {
+            _crawlUrl = crawlUrl;
+
             try
             {
                 HtmlWeb web = new HtmlWeb();
-                _htmlDocument = web.Load(CrawlerConsts.CrawleUrl);
+                _htmlDocument = web.Load(crawlUrl);
             }
             catch (Exception exception)
             {
                 throw new StackOverflowException($"Error when loading url.{exception.Message}");
             }
         }
+
+        public CaldwellCrawler AddDownloader()
+        {
+            using (WebClient client = new WebClient()) // WebClient class inherits IDisposable
+            {
+                client.DownloadFile(_crawlUrl, @"C:\mozk_delete\localfile.html");
+
+                // Or you can get the file content without saving it
+                string htmlCode = client.DownloadString(_crawlUrl);
+            }
+
+            return this;
+        }
+        
 
         public void ReasonToSolve()
         {
@@ -36,7 +61,7 @@ namespace Caldwell.Infrastructure.Crawler
             //*[@id="oncelikli"]/div[1]/div[1]/div[1]
             
             //# oncelikli > div:nth-child(1) > div:nth-child(1) > div.row.row2
-            var mainSpecValues = mainSpecsNode.QuerySelectorAll("div.row.row2 a");
+            var mainSpecValues = mainSpecsNode.QuerySelectorAll("div.row.row2 a"); // go to div row row
             //var node2 = mainSpecsNode.QuerySelector("div.row.row1");
 
         }
@@ -52,8 +77,12 @@ namespace Caldwell.Infrastructure.Crawler
 
             IList<HtmlNode> nodes = htmlDoc.QuerySelectorAll("div .my-class[data-attr=123] > ul li");
             HtmlNode node = nodes[0].QuerySelector("p.with-this-class span[data-myattr]");
+
+            // how to write css selector
+            // https://www.w3schools.com/cssref/css_selectors.asp  -- https://www.w3schools.com/cssref/trysel.asp
+            // https://www.w3schools.com/jsref/met_document_queryselector.asp
         }
-        
+
 
         public void Crawle()
         {

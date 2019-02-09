@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Caldwell.Infrastructure.Crawler
 {
-    internal class CrawlerConsts
+    public class CrawlerConsts
     {
         
     }

@@ -13,7 +13,9 @@ namespace Caldwell.Console
         {
             try
             {
-                CaldwellCrawler crawler = new CaldwellCrawler();
+                CaldwellCrawler crawler = new CaldwellCrawler(CrawlerConsts.CrawleUrl)
+                                    .AddDownloader();
+
                 crawler.ReasonToSolve();
 
                 //CatalogCreator creator = new CatalogCreator();
