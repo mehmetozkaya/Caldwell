@@ -14,12 +14,12 @@ namespace Caldwell.Console
             {
                 CatalogCreator creator = new CatalogCreator();
                 Task create = creator.Create();
-                create.Wait();                
+                create.Wait();
             }
             catch (Exception exception)
             {
                 throw exception;
-            }                                  
+            }
         }
     }
 
