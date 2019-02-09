@@ -13,18 +13,27 @@ namespace Caldwell.Console
             var repo = new GenericRepository<Catalog>();
             var list = repo.GetAll();
 
-            
+            try
+            {
+                var cat = GetNewCatalog();
+                repo.Create(cat);
+            }
+            catch (Exception exception)
+            {
+                throw exception;
+            }
+                                  
         }
 
-        public Catalog GetNewCatalog()
+        public static Catalog GetNewCatalog()
         {
 
             var item = new Catalog()
             {
                 CatalogTypeId = 1,
                 CatalogBrandId = 1,
-                Name = "IPhone X",
-                Slug = "iphone-x",
+                Name = "IPhone Y",
+                Slug = "iphone-Y",
                 Star = 4.4,
                 Description = "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ut, tenetur natus doloremque laborum quos iste ipsum rerum obcaecati impedit odit illo dolorum ab tempora nihil dicta earum fugiat. Temporibus, voluptatibus. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ut, tenetur natus doloremque laborum quos iste ipsum rerum obcaecati impedit odit illo dolorum ab tempora nihil dicta earum fugiat. Temporibus, voluptatibus.",
                 Summary = "A seasonal delight we offer every autumn.  Pumpking bread with just a bit of spice, cream cheese frosting with just a hint of home.",

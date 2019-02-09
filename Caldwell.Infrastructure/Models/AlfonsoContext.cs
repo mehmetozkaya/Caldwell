@@ -39,12 +39,12 @@ namespace Caldwell.Infrastructure.Models
             modelBuilder.HasAnnotation("ProductVersion", "2.2.1-servicing-10028");
 
             modelBuilder.Entity<Catalog>(entity =>
-            {
+            {                
                 entity.HasIndex(e => e.CatalogBrandId);
 
                 entity.HasIndex(e => e.CatalogTypeId);
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
+                entity.Property(e => e.Id).ForSqlServerUseSequenceHiLo("catalog_hilo").IsRequired(); // .ValueGeneratedNever();
 
                 entity.Property(e => e.Cpu).HasColumnName("CPU");
 

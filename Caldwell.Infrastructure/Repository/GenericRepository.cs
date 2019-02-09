@@ -15,7 +15,7 @@ namespace Caldwell.Infrastructure.Repository
         private readonly AlfonsoContext _dbContext;
         public GenericRepository()
         {
-            _dbContext = new AlfonsoContext();
+            _dbContext = new AlfonsoContext();            
         }
       
         public IQueryable<TEntity> GetAll()
@@ -30,10 +30,16 @@ namespace Caldwell.Infrastructure.Repository
                         .FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public async Task Create(TEntity entity)
+        public void Create(TEntity entity)
+        {
+            _dbContext.Set<TEntity>().Add(entity);
+            _dbContext.SaveChanges();
+        }
+
+        public async Task CreateAsync(TEntity entity)
         {
             await _dbContext.Set<TEntity>().AddAsync(entity);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();            
         }
 
         public async Task Update(int id, TEntity entity)
