@@ -30,12 +30,6 @@ namespace Caldwell.Infrastructure.Repository
                         .FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public void Create(TEntity entity)
-        {
-            _dbContext.Set<TEntity>().Add(entity);
-            _dbContext.SaveChanges();
-        }
-
         public async Task CreateAsync(TEntity entity)
         {
             await _dbContext.Set<TEntity>().AddAsync(entity);

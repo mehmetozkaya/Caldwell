@@ -1,31 +1,44 @@
-﻿using Caldwell.Infrastructure.Models;
+﻿using Caldwell.Core.Repository;
+using Caldwell.Infrastructure.Models;
 using Caldwell.Infrastructure.Repository;
 using System;
+using System.Threading.Tasks;
 
 namespace Caldwell.Console
 {
     class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            // System.Console.WriteLine("Hello World!");
-
-            var repo = new GenericRepository<Catalog>();
-            var list = repo.GetAll();
-
             try
             {
-                var cat = GetNewCatalog();
-                repo.Create(cat);
+                CatalogCreator creator = new CatalogCreator();
+                Task create = creator.Create();
+                create.Wait();                
             }
             catch (Exception exception)
             {
                 throw exception;
-            }
-                                  
+            }                                  
+        }
+    }
+
+    public class CatalogCreator
+    {
+        private readonly IGenericRepository<Catalog> _repository;
+
+        public CatalogCreator()
+        {
+            _repository = new GenericRepository<Catalog>();
         }
 
-        public static Catalog GetNewCatalog()
+        public async Task Create()
+        {
+            var catalog = GetNewCatalog();
+            await _repository.CreateAsync(catalog);
+        }
+
+        public Catalog GetNewCatalog()
         {
 
             var item = new Catalog()
@@ -48,7 +61,7 @@ namespace Caldwell.Console
                 Screen = "6.4 Inc",
                 Storage = "64 GB",
                 Ram = "4 GB",
-                Cpu = "2.9 Ghz"                
+                Cpu = "2.9 Ghz"
             };
 
             var newFeature = new Features()
@@ -62,8 +75,8 @@ namespace Caldwell.Console
                 Value = "5.45 Inc"
             });
 
-            item.Features.Add(newFeature);            
-            
+            item.Features.Add(newFeature);
+
             return item;
         }
     }
