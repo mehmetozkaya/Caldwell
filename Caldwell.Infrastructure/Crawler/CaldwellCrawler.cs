@@ -9,9 +9,20 @@ namespace Caldwell.Infrastructure.Crawler
 {
     public class CaldwellCrawler : ICaldwellCrawler
     {
+        
+        private readonly HtmlDocument _htmlDocument;
+
         public CaldwellCrawler()
         {
-
+            try
+            {
+                HtmlWeb web = new HtmlWeb();
+                _htmlDocument = web.Load(CrawleUrl);
+            }
+            catch (Exception exception)
+            {
+                throw new StackOverflowException($"Error when loading url.{exception.Message}");
+            }
         }
 
         public void Crawle()
