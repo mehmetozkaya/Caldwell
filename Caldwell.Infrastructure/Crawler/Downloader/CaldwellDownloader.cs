@@ -68,11 +68,11 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
             LocalFilePath = $"{_mainPath}{fileName}.html";            
         }        
 
-        private HtmlDocument GetExistingFile(string fileName)
+        private HtmlDocument GetExistingFile(string fullPath)
         {            
             //string htmlString = File.ReadAllText(fileName);
             var htmlDocument = new HtmlDocument();
-            htmlDocument.Load(fileName);
+            htmlDocument.Load(fullPath);
             return htmlDocument;
         }
     }
