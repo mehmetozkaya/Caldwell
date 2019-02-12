@@ -20,8 +20,4 @@
     <ProjectReference Include="..\Caldwell.Core\Caldwell.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Crawler\Request\" />
-  </ItemGroup>
-
 </Project>
