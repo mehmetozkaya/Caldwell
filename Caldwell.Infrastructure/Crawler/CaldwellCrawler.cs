@@ -1,4 +1,5 @@
 ﻿using Caldwell.Core.Crawler;
+using Caldwell.Infrastructure.Crawler.Request;
 using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
 using System;
@@ -34,6 +35,13 @@ namespace Caldwell.Infrastructure.Crawler
             {
                 throw new StackOverflowException($"Error when loading url.{exception.Message}");
             }
+        }
+
+        public CaldwellCrawler AddRequest(ICaldwellRequest request)
+        {
+
+
+            return this;
         }
 
         public CaldwellCrawler AddDownloader()

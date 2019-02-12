@@ -14,7 +14,7 @@ namespace Caldwell.Console
             try
             {
                 CaldwellCrawler crawler = new CaldwellCrawler(CrawlerConsts.CrawleUrl)
-                                    .AddDownloader();
+                                    .AddDownloader();                                    
 
                 crawler.ReasonToSolve();
 

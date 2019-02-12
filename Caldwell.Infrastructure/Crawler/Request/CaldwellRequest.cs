@@ -6,6 +6,6 @@ namespace Caldwell.Infrastructure.Crawler.Request
 {
     public class CaldwellRequest : ICaldwellRequest
     {        
-        public string TimeOut { get; set; }
+        public long TimeOut { get; set; }
     }
 }
