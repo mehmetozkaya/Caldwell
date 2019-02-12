@@ -1,9 +1,21 @@
 ﻿namespace Caldwell.Infrastructure.Crawler.Downloader
 {
+    /// <summary>
+    /// Type of the downloaders when crawler download source web
+    /// </summary>
     public enum CaldwellDownloaderType
     {
-        FromFile, // download to local file
-        FromMemory, // without downloading to local
-        FromWeb // read direct from web
+        /// <summary>
+        /// download to local file
+        /// </summary>
+        FromFile,
+        /// <summary>
+        /// without downloading to local
+        /// </summary>
+        FromMemory,
+        /// <summary>
+        /// read direct from web
+        /// </summary>
+        FromWeb
     }
 }

@@ -1,10 +1,6 @@
 ﻿using HtmlAgilityPack;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Net;
-using System.Text;
 
 namespace Caldwell.Infrastructure.Crawler.Downloader
 {
@@ -13,14 +9,8 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
         public CaldwellDownloaderType DownloderType { get; set; }
         public string DownloadPath { get; set; }
 
-        private readonly CaldwellDownloaderType _downloaderType;
-        private readonly string _mainPath = @"C:\mozk_delete\";
-        public string LocalFilePath { get; private set; }
-
-        public CaldwellDownloader(CaldwellDownloaderType downloaderType = CaldwellDownloaderType.FromFile, [Required] string mainPath = null)
+        public CaldwellDownloader()
         {
-            _downloaderType = downloaderType;
-            _mainPath = mainPath ?? _mainPath;
         }
 
         public HtmlDocument Download(string crawlUrl, string fileName = null)
@@ -40,7 +30,7 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
 
         private HtmlDocument DownloadInternal(string crawlUrl)
         {
-            switch (_downloaderType)
+            switch (DownloderType)
             {
                 case CaldwellDownloaderType.FromFile:
                     using (WebClient client = new WebClient()) // WebClient class inherits IDisposable

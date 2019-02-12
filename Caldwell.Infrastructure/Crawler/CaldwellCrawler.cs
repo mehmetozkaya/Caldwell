@@ -1,5 +1,6 @@
 ﻿using Caldwell.Core.Crawler;
 using Caldwell.Infrastructure.Crawler.Downloader;
+using Caldwell.Infrastructure.Crawler.Processor;
 using Caldwell.Infrastructure.Crawler.Request;
 using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
@@ -22,6 +23,7 @@ namespace Caldwell.Infrastructure.Crawler
 
         public ICaldwellRequest Request { get; private set; }
         public ICaldwellDownloader Downloader { get; private set; }
+        public ICaldwellProcessor Processor { get; private set; }
 
         public CaldwellCrawler()
         {
