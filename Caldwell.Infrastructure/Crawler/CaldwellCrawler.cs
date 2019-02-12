@@ -1,4 +1,5 @@
 ﻿using Caldwell.Core.Crawler;
+using Caldwell.Infrastructure.Crawler.Downloader;
 using Caldwell.Infrastructure.Crawler.Request;
 using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
@@ -20,6 +21,7 @@ namespace Caldwell.Infrastructure.Crawler
         // Add Pipeline(new ConsoleEntityPipeline()); -- insert db
 
         public ICaldwellRequest Request { get; private set; }
+        public ICaldwellDownloader Downloader { get; private set; }
 
         public CaldwellCrawler()
         {

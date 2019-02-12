@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -13,7 +14,7 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
         private readonly string _mainPath = @"C:\mozk_delete\";
         public string LocalFilePath { get; private set; }
 
-        public CaldwellDownloader(CaldwellDownloaderType downloaderType = CaldwellDownloaderType.FromFile, string mainPath = null)
+        public CaldwellDownloader(CaldwellDownloaderType downloaderType = CaldwellDownloaderType.FromFile, [Required] string mainPath = null)
         {
             _downloaderType = downloaderType;
             _mainPath = mainPath ?? _mainPath;

@@ -14,8 +14,8 @@ namespace Caldwell.Console
         {
             try
             {
-                CaldwellCrawler crawler = new CaldwellCrawler(CrawlerConsts.CrawleUrl)
-                                    .AddRequest(new CaldwellRequest { TimeOut = 5000 })
+                CaldwellCrawler crawler = new CaldwellCrawler()
+                                    .AddRequest(new CaldwellRequest { Url = CrawlerConsts.CrawleUrl, TimeOut = 5000 })
                                     .AddDownloader();
 
                 crawler.ReasonToSolve();
