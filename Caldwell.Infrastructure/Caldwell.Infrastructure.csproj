@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Crawler\Processor\" />
     <Folder Include="Crawler\Request\" />
   </ItemGroup>
 
