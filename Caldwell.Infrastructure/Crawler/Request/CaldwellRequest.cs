@@ -4,8 +4,7 @@ using System.Text;
 
 namespace Caldwell.Infrastructure.Crawler.Request
 {
-    public interface ICaldwellRequest
+    public class CaldwellRequest : ICaldwellRequest
     {
-        string TimeOut { get; set; }
     }
 }
