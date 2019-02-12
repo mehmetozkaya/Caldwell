@@ -13,12 +13,14 @@ namespace Caldwell.Console
     {
         public static void Main(string[] args)
         {
-            CaldwellCrawler crawler = new CaldwellCrawler()
+            var crawler = new CaldwellCrawler()
                                     .AddRequest(new CaldwellRequest { Url = CrawlerConsts.CrawleUrl, TimeOut = 5000 })
                                     .AddDownloader(new CaldwellDownloader { DownloderType = CaldwellDownloaderType.FromFile, DownloadPath = @"C:\caldwellcrawler\" })
+                                    
                                     ;
 
-            crawler.ReasonToSolve();
+            
+            //crawler.ReasonToSolve();
 
             //CatalogCreator creator = new CatalogCreator();
             //Task create = creator.Create();

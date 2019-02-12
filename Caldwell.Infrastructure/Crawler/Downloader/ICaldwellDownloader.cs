@@ -7,6 +7,9 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
 {
     public interface ICaldwellDownloader
     {
-        HtmlDocument Download(string crawlUrl, string fileName = null);
+        CaldwellDownloaderType DownloderType { get; set; }
+        string DownloadPath { get; set; }
+
+        HtmlDocument Download(string crawlUrl);
     }
 }

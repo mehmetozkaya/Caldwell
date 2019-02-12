@@ -6,6 +6,6 @@ namespace Caldwell.Infrastructure.Crawler.Processor
 {
     public interface ICaldwellProcessor
     {
-
+        void Process();
     }
 }

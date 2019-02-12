@@ -47,35 +47,24 @@ namespace Caldwell.Infrastructure.Crawler
         public CaldwellCrawler AddDownloader(ICaldwellDownloader downloader)
         {
             Downloader = downloader;
-            return this;
-
-            using (WebClient client = new WebClient()) // WebClient class inherits IDisposable
-            {
-                client.DownloadFile(_crawlUrl, @"C:\mozk_delete\localfile.html");
-
-                // Or you can get the file content without saving it
-                string htmlCode = client.DownloadString(_crawlUrl);
-            }
-
+            Downloader.Download(Request.Url);
             return this;
         }
         
+        //public void ReasonToSolve()
+        //{
+        //    var titleNode = _htmlDocument.DocumentNode.SelectSingleNode("//*[@id='ozet']/div[1]/div/h1/a");
 
-        public void ReasonToSolve()
-        {
-            var titleNode = _htmlDocument.DocumentNode.SelectSingleNode("//*[@id='ozet']/div[1]/div/h1/a");
+        //    var realTitle = titleNode.InnerText;
+        //    var title = titleNode.Attributes["title"].Value;
 
-            var realTitle = titleNode.InnerText;
-            var title = titleNode.Attributes["title"].Value;
-
-            var mainSpecsNode = _htmlDocument.DocumentNode.SelectSingleNode("//*[@id='oncelikli']");
-            //*[@id="oncelikli"]/div[1]/div[1]/div[1]
+        //    var mainSpecsNode = _htmlDocument.DocumentNode.SelectSingleNode("//*[@id='oncelikli']");
+        //    //*[@id="oncelikli"]/div[1]/div[1]/div[1]
             
-            //# oncelikli > div:nth-child(1) > div:nth-child(1) > div.row.row2
-            var mainSpecValues = mainSpecsNode.QuerySelectorAll("div.row.row2 a"); // go to div row row
-            //var node2 = mainSpecsNode.QuerySelector("div.row.row1");
-
-        }
+        //    //# oncelikli > div:nth-child(1) > div:nth-child(1) > div.row.row2
+        //    var mainSpecValues = mainSpecsNode.QuerySelectorAll("div.row.row2 a"); // go to div row row
+        //    //var node2 = mainSpecsNode.QuerySelector("div.row.row1");
+        //}
 
         public void CssReader()
         {

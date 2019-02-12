@@ -8,24 +8,23 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
     {
         public CaldwellDownloaderType DownloderType { get; set; }
         public string DownloadPath { get; set; }
+        private string _localFilePath;
 
         public CaldwellDownloader()
         {
+            
         }
 
-        public HtmlDocument Download(string crawlUrl, string fileName = null)
-        {            
+        public HtmlDocument Download(string crawlUrl)
+        {
             // if exist dont download again
-            if(!string.IsNullOrEmpty(fileName))
-            {
-                PrepareFilePath(fileName);
+            PrepareFilePath(crawlUrl);
 
-                var existing = GetExistingFile(LocalFilePath);
-                if (existing != null)
-                    return existing;
-            }
+            var existing = GetExistingFile(_localFilePath);
+            if (existing != null)
+                return existing;
 
-            return DownloadInternal(crawlUrl);         
+            return DownloadInternal(crawlUrl);
         }
 
         private HtmlDocument DownloadInternal(string crawlUrl)
@@ -35,9 +34,9 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
                 case CaldwellDownloaderType.FromFile:
                     using (WebClient client = new WebClient()) // WebClient class inherits IDisposable
                     {
-                        client.DownloadFile(crawlUrl, LocalFilePath);
+                        client.DownloadFile(crawlUrl, _localFilePath);
                     }
-                    return GetExistingFile(LocalFilePath);
+                    return GetExistingFile(_localFilePath);
                     
                 case CaldwellDownloaderType.FromMemory:
                     var htmlDocument = new HtmlDocument();
@@ -51,7 +50,7 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
                     
                 case CaldwellDownloaderType.FromWeb:
                     HtmlWeb web = new HtmlWeb();
-                    return web.Load(crawlUrl);                                   
+                    return web.Load(crawlUrl);
             }
 
             throw new InvalidOperationException("Can not load html file from given source.");
@@ -59,15 +58,17 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
 
         private void PrepareFilePath(string fileName)
         {
-            LocalFilePath = $"{_mainPath}{fileName}.html";            
+            var parts = fileName.Split('/');
+            _localFilePath = $"{DownloadPath}{fileName}.html";
         }        
 
         private HtmlDocument GetExistingFile(string fullPath)
         {            
-            //string htmlString = File.ReadAllText(fileName);
             var htmlDocument = new HtmlDocument();
             htmlDocument.Load(fullPath);
             return htmlDocument;
         }
+
+        
     }
 }
