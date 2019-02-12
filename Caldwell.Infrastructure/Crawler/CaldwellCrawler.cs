@@ -13,34 +13,30 @@ namespace Caldwell.Infrastructure.Crawler
     public class CaldwellCrawler : ICaldwellCrawler
     {
         // Crawler Steps -- visual -> https://github.com/dotnetcore/DotnetSpider
-        // Add Downloader
         // Add Request - Url
+        // Add Downloader
         // Add Processor - BasePageProcessor - hmtl reading
         // Add EntityType<BaiduSearchEntry>();
         // Add Pipeline(new ConsoleEntityPipeline()); -- insert db
 
-        private readonly HtmlDocument _htmlDocument;
-        private readonly string _crawlUrl;
+        public ICaldwellRequest Request { get; private set; }
 
-        public CaldwellCrawler(string crawlUrl)
+        public CaldwellCrawler()
         {
-            _crawlUrl = crawlUrl;
-
-            try
-            {
-                HtmlWeb web = new HtmlWeb();
-                _htmlDocument = web.Load(crawlUrl);
-            }
-            catch (Exception exception)
-            {
-                throw new StackOverflowException($"Error when loading url.{exception.Message}");
-            }
+            //try
+            //{
+            //    HtmlWeb web = new HtmlWeb();
+            //    _htmlDocument = web.Load(crawlUrl);
+            //}
+            //catch (Exception exception)
+            //{
+            //    throw new StackOverflowException($"Error when loading url.{exception.Message}");
+            //}
         }
 
         public CaldwellCrawler AddRequest(ICaldwellRequest request)
         {
-
-
+            Request = request;
             return this;
         }
 
