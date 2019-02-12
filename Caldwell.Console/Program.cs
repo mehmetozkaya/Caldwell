@@ -1,5 +1,6 @@
 ﻿using Caldwell.Core.Repository;
 using Caldwell.Infrastructure.Crawler;
+using Caldwell.Infrastructure.Crawler.Downloader;
 using Caldwell.Infrastructure.Crawler.Request;
 using Caldwell.Infrastructure.Models;
 using Caldwell.Infrastructure.Repository;
@@ -16,7 +17,7 @@ namespace Caldwell.Console
             {
                 CaldwellCrawler crawler = new CaldwellCrawler()
                                     .AddRequest(new CaldwellRequest { Url = CrawlerConsts.CrawleUrl, TimeOut = 5000 })
-                                    .AddDownloader();
+                                    .AddDownloader(new CaldwellDownloader { LocalFilePath = "a" } );
 
                 crawler.ReasonToSolve();
 

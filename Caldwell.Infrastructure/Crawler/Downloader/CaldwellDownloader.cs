@@ -10,6 +10,9 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
 {
     public class CaldwellDownloader : ICaldwellDownloader
     {
+        public CaldwellDownloaderType DownloderType { get; set; }
+        public string DownloadPath { get; set; }
+
         private readonly CaldwellDownloaderType _downloaderType;
         private readonly string _mainPath = @"C:\mozk_delete\";
         public string LocalFilePath { get; private set; }
@@ -76,12 +79,5 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
             htmlDocument.Load(fullPath);
             return htmlDocument;
         }
-    }
-
-    public enum CaldwellDownloaderType
-    {
-        FromFile, // download to local file
-        FromMemory, // without downloading to local
-        FromWeb // read direct from web
     }
 }

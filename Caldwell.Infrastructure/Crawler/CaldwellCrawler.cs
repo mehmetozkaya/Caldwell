@@ -42,8 +42,11 @@ namespace Caldwell.Infrastructure.Crawler
             return this;
         }
 
-        public CaldwellCrawler AddDownloader()
+        public CaldwellCrawler AddDownloader(ICaldwellDownloader downloader)
         {
+            Downloader = downloader;
+            return this;
+
             using (WebClient client = new WebClient()) // WebClient class inherits IDisposable
             {
                 client.DownloadFile(_crawlUrl, @"C:\mozk_delete\localfile.html");
