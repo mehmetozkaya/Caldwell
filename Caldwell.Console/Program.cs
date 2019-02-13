@@ -1,6 +1,7 @@
 ﻿using Caldwell.Core.Repository;
 using Caldwell.Infrastructure.Crawler;
 using Caldwell.Infrastructure.Crawler.Downloader;
+using Caldwell.Infrastructure.Crawler.Processor;
 using Caldwell.Infrastructure.Crawler.Request;
 using Caldwell.Infrastructure.Models;
 using Caldwell.Infrastructure.Repository;
@@ -16,7 +17,7 @@ namespace Caldwell.Console
             var crawler = new CaldwellCrawler()
                                     .AddRequest(new CaldwellRequest { Url = CrawlerConsts.CrawleUrl, TimeOut = 5000 })
                                     .AddDownloader(new CaldwellDownloader { DownloderType = CaldwellDownloaderType.FromFile, DownloadPath = @"C:\caldwellcrawler\" })
-                                    
+                                    .AddProcessor(new CaldwellProcessor { })
                                     ;
 
             
