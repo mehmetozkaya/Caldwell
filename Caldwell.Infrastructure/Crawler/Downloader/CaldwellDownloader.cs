@@ -59,14 +59,26 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
         private void PrepareFilePath(string fileName)
         {
             var parts = fileName.Split('/');
-            _localFilePath = $"{DownloadPath}{fileName}.html";
-        }        
+            var htmlpage = string.Empty;
+            if (parts.Length > 0)
+                htmlpage = parts[parts.Length - 1];
+
+            _localFilePath = $"{DownloadPath}{htmlpage}";
+        }
 
         private HtmlDocument GetExistingFile(string fullPath)
-        {            
-            var htmlDocument = new HtmlDocument();
-            htmlDocument.Load(fullPath);
-            return htmlDocument;
+        {
+            try
+            {
+                var htmlDocument = new HtmlDocument();
+                htmlDocument.Load(fullPath);
+                return htmlDocument;
+            }
+            catch (Exception)
+            {                
+            }
+
+            return null;
         }
 
         

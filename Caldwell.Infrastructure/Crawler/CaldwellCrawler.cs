@@ -53,7 +53,7 @@ namespace Caldwell.Infrastructure.Crawler
 
         public CaldwellCrawler AddProcessor(ICaldwellProcessor processor)
         {
-
+            Processor = processor;
             return this;
         }
 
