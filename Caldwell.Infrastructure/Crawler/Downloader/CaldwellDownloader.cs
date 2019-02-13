@@ -35,7 +35,8 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
                 case CaldwellDownloaderType.FromFile:
                     using (WebClient client = new WebClient()) // WebClient class inherits IDisposable
                     {
-                        client.DownloadFileAsync(new Uri(crawlUrl, true), _localFilePath);
+                        var uri = new Uri(crawlUrl);
+                        client.DownloadFileAsync(uri, _localFilePath);
                     }
                     return await GetExistingFile(_localFilePath);
                     
@@ -76,7 +77,7 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
                 return htmlDocument;
             }
             catch (Exception)
-            {                
+            {
             }
 
             return null;
