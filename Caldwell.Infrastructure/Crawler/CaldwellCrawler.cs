@@ -9,8 +9,6 @@ using HtmlAgilityPack.CssSelectors.NetCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Text;
 
 namespace Caldwell.Infrastructure.Crawler
 {
@@ -31,15 +29,6 @@ namespace Caldwell.Infrastructure.Crawler
 
         public CaldwellCrawler()
         {
-            //try
-            //{
-            //    HtmlWeb web = new HtmlWeb();
-            //    _htmlDocument = web.Load(crawlUrl);
-            //}
-            //catch (Exception exception)
-            //{
-            //    throw new StackOverflowException($"Error when loading url.{exception.Message}");
-            //}
         }
 
         public CaldwellCrawler AddRequest(ICaldwellRequest request)
@@ -50,8 +39,7 @@ namespace Caldwell.Infrastructure.Crawler
 
         public CaldwellCrawler AddDownloader(ICaldwellDownloader downloader)
         {
-            Downloader = downloader;
-            Downloader.Download(Request.Url);
+            Downloader = downloader;            
             return this;
         }
 
@@ -73,6 +61,12 @@ namespace Caldwell.Infrastructure.Crawler
             return this;
         }
 
+        public void Crawle()
+        {
+            var document = Downloader.Download(Request.Url);
+            Processor.Process(document);
+        }
+
 
         public void CssReader()
         {
@@ -92,7 +86,7 @@ namespace Caldwell.Infrastructure.Crawler
         }
 
 
-        public void Crawle()
+        public void Crawle_Example()
         {
             // https://html-agility-pack.net/documentation
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,7 +8,7 @@ namespace Caldwell.Infrastructure.Crawler.Processor
 {
     public class CaldwellProcessor : ICaldwellProcessor
     {
-        public void Process()
+        public void Process(HtmlDocument document)
         {
             Task.Run(() => Console.WriteLine());
             
