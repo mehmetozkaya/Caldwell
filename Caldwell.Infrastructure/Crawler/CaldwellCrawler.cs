@@ -1,5 +1,6 @@
 ﻿using Caldwell.Core.Crawler;
 using Caldwell.Infrastructure.Crawler.Downloader;
+using Caldwell.Infrastructure.Crawler.Pipeline;
 using Caldwell.Infrastructure.Crawler.Processor;
 using Caldwell.Infrastructure.Crawler.Request;
 using HtmlAgilityPack;
@@ -24,6 +25,7 @@ namespace Caldwell.Infrastructure.Crawler
         public ICaldwellRequest Request { get; private set; }
         public ICaldwellDownloader Downloader { get; private set; }
         public ICaldwellProcessor Processor { get; private set; }
+        public ICaldwellPipeline Pipeline { get; private set; }
 
         public CaldwellCrawler()
         {
@@ -54,6 +56,12 @@ namespace Caldwell.Infrastructure.Crawler
         public CaldwellCrawler AddProcessor(ICaldwellProcessor processor)
         {
             Processor = processor;
+            return this;
+        }
+
+        public CaldwellCrawler AddPipeline(ICaldwellPipeline pipeline)
+        {
+            Pipeline = pipeline;
             return this;
         }
 
