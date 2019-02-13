@@ -4,6 +4,7 @@ using Caldwell.Infrastructure.Crawler.Downloader;
 using Caldwell.Infrastructure.Crawler.Pipeline;
 using Caldwell.Infrastructure.Crawler.Processor;
 using Caldwell.Infrastructure.Crawler.Request;
+using Caldwell.Infrastructure.Crawler.Scheduler;
 using Caldwell.Infrastructure.Models;
 using Caldwell.Infrastructure.Repository;
 using System;
@@ -19,14 +20,15 @@ namespace Caldwell.Console
                                     .AddRequest(new CaldwellRequest { Url = CrawlerConsts.CrawleUrl, TimeOut = 5000 })
                                     .AddDownloader(new CaldwellDownloader { DownloderType = CaldwellDownloaderType.FromFile, DownloadPath = @"C:\caldwellcrawler\" })
                                     .AddProcessor(new CaldwellProcessor { })
-                                    .AddPipeline(new CaldwellPipeline { });                                
+                                    .AddScheduler(new CaldwellScheduler { })
+                                    .AddPipeline(new CaldwellPipeline { });
 
             
             //crawler.ReasonToSolve();
 
             //CatalogCreator creator = new CatalogCreator();
             //Task create = creator.Create();
-            //create.Wait();          
+            //create.Wait();
         }
     }
 
