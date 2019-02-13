@@ -23,6 +23,7 @@ namespace Caldwell.Console
                                     .AddScheduler(new CaldwellScheduler { })
                                     .AddPipeline(new CaldwellPipeline { });
 
+            crawler.Crawle();
             
             //crawler.ReasonToSolve();
 

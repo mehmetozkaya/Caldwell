@@ -6,6 +6,6 @@ namespace Caldwell.Infrastructure.Crawler.Pipeline
 {
     public interface ICaldwellPipeline
     {
-
+        void Run();
     }
 }

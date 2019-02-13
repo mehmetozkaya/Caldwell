@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using HtmlAgilityPack.CssSelectors.NetCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,25 +11,18 @@ namespace Caldwell.Infrastructure.Crawler.Processor
     {
         public void Process(HtmlDocument document)
         {
-            Task.Run(() => Console.WriteLine());
-            
-            throw new NotImplementedException();
-        }
+            var titleNode = document.DocumentNode.SelectSingleNode("//*[@id='ozet']/div[1]/div/h1/a");
 
+            var realTitle = titleNode.InnerText;
+            var title = titleNode.Attributes["title"].Value;
 
-        //public void ReasonToSolve()
-        //{
-        //    var titleNode = _htmlDocument.DocumentNode.SelectSingleNode("//*[@id='ozet']/div[1]/div/h1/a");
+            var mainSpecsNode = document.DocumentNode.SelectSingleNode("//*[@id='oncelikli']");
+            //*[@id="oncelikli"]/div[1]/div[1]/div[1]
 
-        //    var realTitle = titleNode.InnerText;
-        //    var title = titleNode.Attributes["title"].Value;
+            //# oncelikli > div:nth-child(1) > div:nth-child(1) > div.row.row2
+            var mainSpecValues = mainSpecsNode.QuerySelectorAll("div.row.row2 a"); // go to div row row
+            var node2 = mainSpecsNode.QuerySelector("div.row.row1");
 
-        //    var mainSpecsNode = _htmlDocument.DocumentNode.SelectSingleNode("//*[@id='oncelikli']");
-        //    //*[@id="oncelikli"]/div[1]/div[1]/div[1]
-
-        //    //# oncelikli > div:nth-child(1) > div:nth-child(1) > div.row.row2
-        //    var mainSpecValues = mainSpecsNode.QuerySelectorAll("div.row.row2 a"); // go to div row row
-        //    //var node2 = mainSpecsNode.QuerySelector("div.row.row1");
-        //}
+        }     
     }
 }

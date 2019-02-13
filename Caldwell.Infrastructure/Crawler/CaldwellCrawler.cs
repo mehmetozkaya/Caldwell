@@ -65,6 +65,7 @@ namespace Caldwell.Infrastructure.Crawler
         {
             var document = Downloader.Download(Request.Url);
             Processor.Process(document);
+            Pipeline.Run();
         }
 
 
