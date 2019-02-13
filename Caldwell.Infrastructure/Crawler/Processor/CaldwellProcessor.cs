@@ -1,4 +1,5 @@
-﻿using HtmlAgilityPack;
+﻿using Caldwell.Infrastructure.Models;
+using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
 using System;
 using System.Collections.Generic;
@@ -9,8 +10,8 @@ namespace Caldwell.Infrastructure.Crawler.Processor
 {
     public class CaldwellProcessor : ICaldwellProcessor
     {
-        public void Process(HtmlDocument document)
-        {
+        public Catalog Process(HtmlDocument document)
+        {            
             var titleNode = document.DocumentNode.SelectSingleNode("//*[@id='ozet']/div[1]/div/h1/a");
 
             var realTitle = titleNode.InnerText;
@@ -22,6 +23,9 @@ namespace Caldwell.Infrastructure.Crawler.Processor
             //# oncelikli > div:nth-child(1) > div:nth-child(1) > div.row.row2
             var mainSpecValues = mainSpecsNode.QuerySelectorAll("div.row.row2 a"); // go to div row row
             var node2 = mainSpecsNode.QuerySelector("div.row.row1");
+
+
+            return new Catalog();
 
         }     
     }

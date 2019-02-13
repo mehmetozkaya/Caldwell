@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Caldwell.Infrastructure.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Caldwell.Infrastructure.Crawler.Pipeline
 {
     public interface ICaldwellPipeline
     {
-        void Run();
+        Task Run(Catalog entity);
     }
 }
