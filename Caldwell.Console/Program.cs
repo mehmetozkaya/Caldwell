@@ -30,6 +30,11 @@ namespace Caldwell.Console
             //CatalogCreator creator = new CatalogCreator();
             //Task create = creator.Create();
             //create.Wait();
+
+
+            // TODO
+            // url isini coz
+            // medium - youtube - eShopContainer_Crawler - scaffolding.
         }
     }
 

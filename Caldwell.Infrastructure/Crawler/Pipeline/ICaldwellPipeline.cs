@@ -8,6 +8,6 @@ namespace Caldwell.Infrastructure.Crawler.Pipeline
 {
     public interface ICaldwellPipeline
     {
-        Task Run(Catalog entity);
+        Task Run(IEnumerable<Catalog> entity);
     }
 }

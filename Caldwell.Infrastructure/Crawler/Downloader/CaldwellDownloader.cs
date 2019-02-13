@@ -79,10 +79,7 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
             catch (Exception)
             {
             }
-
             return null;
-        }
-
-        
+        }        
     }
 }

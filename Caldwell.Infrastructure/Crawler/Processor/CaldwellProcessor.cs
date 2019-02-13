@@ -12,7 +12,7 @@ namespace Caldwell.Infrastructure.Crawler.Processor
 {
     public class CaldwellProcessor : ICaldwellProcessor
     {
-        public Catalog Process(HtmlDocument document)
+        public async Task<IEnumerable<Catalog>> Process(HtmlDocument document)
         {            
             var titleNode = document.DocumentNode.SelectSingleNode("//*[@id='ozet']/div[1]/div/h1/a");
 
@@ -27,7 +27,7 @@ namespace Caldwell.Infrastructure.Crawler.Processor
             var node2 = mainSpecsNode.QuerySelector("div.row.row1");
 
 
-            return new Catalog();
+            return new List<Catalog>();
         }
 
 

@@ -17,9 +17,12 @@ namespace Caldwell.Infrastructure.Crawler.Pipeline
             _repository = new GenericRepository<Catalog>();
         }
 
-        public async Task Run(Catalog entity)
-        {            
-            await _repository.CreateAsync(entity);
+        public async Task Run(IEnumerable<Catalog> entityList)
+        {
+            foreach (var entity in entityList)
+            {
+                await _repository.CreateAsync(entity);
+            }            
         }
     }
 }

@@ -64,8 +64,9 @@ namespace Caldwell.Infrastructure.Crawler
         public async void Crawle()
         {
             var document = await Downloader.Download(Request.Url);
-            var catalog = Processor.Process(document);
-            Pipeline.Run(catalog);
+            var catalog = await Processor.Process(document);
+
+            await Pipeline.Run(catalog);
         }
 
 
