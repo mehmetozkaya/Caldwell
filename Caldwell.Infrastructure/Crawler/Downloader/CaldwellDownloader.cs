@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using System;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Caldwell.Infrastructure.Crawler.Downloader
 {
@@ -15,28 +16,28 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
             
         }
 
-        public HtmlDocument Download(string crawlUrl)
+        public async Task<HtmlDocument> Download(string crawlUrl)
         {
             // if exist dont download again
             PrepareFilePath(crawlUrl);
 
-            var existing = GetExistingFile(_localFilePath);
+            var existing = await GetExistingFile(_localFilePath);
             if (existing != null)
                 return existing;
 
-            return DownloadInternal(crawlUrl);
+            return await DownloadInternal(crawlUrl);
         }
 
-        private HtmlDocument DownloadInternal(string crawlUrl)
+        private async Task<HtmlDocument> DownloadInternal(string crawlUrl)
         {
             switch (DownloderType)
             {
                 case CaldwellDownloaderType.FromFile:
                     using (WebClient client = new WebClient()) // WebClient class inherits IDisposable
                     {
-                        client.DownloadFile(crawlUrl, _localFilePath);
+                        client.DownloadFileAsync(new Uri(crawlUrl, true), _localFilePath);
                     }
-                    return GetExistingFile(_localFilePath);
+                    return await GetExistingFile(_localFilePath);
                     
                 case CaldwellDownloaderType.FromMemory:
                     var htmlDocument = new HtmlDocument();
@@ -66,12 +67,12 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
             _localFilePath = $"{DownloadPath}{htmlpage}";
         }
 
-        private HtmlDocument GetExistingFile(string fullPath)
+        private async Task<HtmlDocument> GetExistingFile(string fullPath)
         {
             try
             {
                 var htmlDocument = new HtmlDocument();
-                htmlDocument.Load(fullPath);
+                await Task.Run(() => htmlDocument.Load(fullPath));
                 return htmlDocument;
             }
             catch (Exception)

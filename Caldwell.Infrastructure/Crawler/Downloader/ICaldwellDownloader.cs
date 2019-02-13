@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Caldwell.Infrastructure.Crawler.Downloader
 {
@@ -10,6 +11,6 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
         CaldwellDownloaderType DownloderType { get; set; }
         string DownloadPath { get; set; }
 
-        HtmlDocument Download(string crawlUrl);
+        Task<HtmlDocument> Download(string crawlUrl);
     }
 }
