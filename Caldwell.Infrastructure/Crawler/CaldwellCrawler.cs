@@ -9,6 +9,9 @@ using HtmlAgilityPack.CssSelectors.NetCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Caldwell.Infrastructure.Crawler
 {
@@ -63,7 +66,9 @@ namespace Caldwell.Infrastructure.Crawler
 
         public async void Crawle()
         {
-            // Getlinks
+            // Getlinks filtered by Regex
+            //Request.Regex
+
 
 
 
@@ -73,131 +78,129 @@ namespace Caldwell.Infrastructure.Crawler
         }
 
 
-        public void CssReader()
+
+        ////////////////////////////////////////////////////////////////////
+
+        // Get Urls //
+        // https://codereview.stackexchange.com/questions/139783/web-crawler-that-uses-task-parallel-library
+
+        public static IEnumerable<string> getLinks(string url, bool hostMatch = true, bool validatePages = true, int level = 0)
         {
-            // https://github.com/trenoncourt/HtmlAgilityPack.CssSelectors.NetCore
+            string formattedUrl = url;
+            if (string.IsNullOrEmpty(formattedUrl)) return Enumerable.Empty<string>();
+            //download root url's
+            IEnumerable<string> rootUrls = getSinglePageLinks(formattedUrl, hostMatch, validatePages);
+            //download url's for each level
+            for (int i = 0; i < level; i++)
+            {
+                rootUrls = rootUrls.Union(getManyPageLinks(rootUrls, hostMatch, validatePages));
+            }
+            return rootUrls;
+        }
 
-            var html = @"http://html-agility-pack.net/";
-            // SELECTORS
-            HtmlWeb web = new HtmlWeb();
-            var htmlDoc = web.Load(html);
+        private static IEnumerable<string> getSinglePageLinks(string formattedUrl, bool hostMatch = true, bool validatePages = true)
+        {
 
-            IList<HtmlNode> nodes = htmlDoc.QuerySelectorAll("div .my-class[data-attr=123] > ul li");
-            HtmlNode node = nodes[0].QuerySelector("p.with-this-class span[data-myattr]");
+            HtmlDocument doc = new HtmlWeb().Load(formattedUrl);
+            var linkedPages = doc.DocumentNode.Descendants("a")
+                                                .Select(a => a.GetAttributeValue("href", null))
+                                                .Where(u => !String.IsNullOrEmpty(u))
+                                                .Distinct();
 
-            // how to write css selector
-            // https://www.w3schools.com/cssref/css_selectors.asp  -- https://www.w3schools.com/cssref/trysel.asp
-            // https://www.w3schools.com/jsref/met_document_queryselector.asp
+            //hostMatch and validatePages left out
+            return linkedPages;
+
+        }
+
+        private static IEnumerable<string> getManyPageLinks(IEnumerable<string> rootUrls, bool hostMatch, bool validatePages)
+        {
+            List<Task> tasks = new List<Task>();
+            List<List<string>> allLinks = new List<List<string>>();
+
+            foreach (string rootUrl in rootUrls)
+            {
+                string rootUrlCopy = rootUrl; //required
+                var task = Task.Factory.StartNew(() =>
+                {
+                    IEnumerable<string> taskResult = getSinglePageLinks(rootUrlCopy, hostMatch, validatePages);
+                    return taskResult;
+                });
+
+                tasks.Add(task);
+                allLinks.Add(task.Result.ToList());
+            }
+
+            Task.WaitAll(tasks.ToArray());
+            return allLinks.SelectMany(x => x).Distinct();
         }
 
 
-        public void Crawle_Example()
+        // second solution
+        async static Task<IEnumerable<string>> GetAllPagesLinks(IEnumerable<string> rootUrls, bool hostMatch, bool validatePages)
         {
-            // https://html-agility-pack.net/documentation
-
-            var html = @"http://html-agility-pack.net/";
-
-            // SELECTORS
-            HtmlWeb web = new HtmlWeb();
-            var htmlDoc = web.Load(html);
-            var node = htmlDoc.DocumentNode.SelectSingleNode("//head/title");
-
-            Console.WriteLine("Node Name: " + node.Name + "\n" + node.OuterHtml);
-
-            string name = htmlDoc.DocumentNode
-                            .SelectNodes("//td/input")
-                            .First()
-                            .Attributes["value"].Value;
-
-            // direct get first one
-            string name2 = htmlDoc.DocumentNode
-                            .SelectSingleNode("//td/input")
-                            .Attributes["value"].Value;
-
-            var htmlNodes = htmlDoc.DocumentNode.SelectNodes("//td/input");
-
-            // MANUPLATORS
-
-            var htmlNodes2 = htmlDoc.DocumentNode.SelectNodes("//body/h1");
-
-            foreach (var node2 in htmlNodes)
-            {
-                Console.WriteLine(node2.InnerHtml);
-                Console.WriteLine(node2.InnerText);
-                Console.WriteLine(node2.OuterHtml);
-            }
-
-            HtmlNode parentNode = node.ParentNode;            
-            Console.WriteLine(parentNode.Name);
-
-            // TRAVERSING
-
-            var htmlBody = htmlDoc.DocumentNode.SelectSingleNode("//body");
-            HtmlNode firstChild = htmlBody.FirstChild;
-            HtmlNode lastChild = htmlBody.LastChild;
-            Console.WriteLine(firstChild.OuterHtml);
-
-            HtmlNodeCollection childNodes = htmlBody.ChildNodes;
-            foreach (var node3 in childNodes)
-            {
-                if (node3.NodeType == HtmlNodeType.Element)
-                {
-                    Console.WriteLine(node3.OuterHtml);
-                }
-            }
-
-            //next sibling
-            var node4 = htmlDoc.DocumentNode.SelectSingleNode("//body/h1");
-            HtmlNode sibling = node4.NextSibling;
-
-            while (sibling != null)
-            {
-                if (sibling.NodeType == HtmlNodeType.Element)
-                    Console.WriteLine(sibling.OuterHtml);
-
-                sibling = sibling.NextSibling;
-            }
-
-            // Ancestors -- atalar
-            var node5 = htmlDoc.DocumentNode.SelectSingleNode("//b");
-
-            foreach (var nNode in node5.Ancestors())
-            {
-                if (nNode.NodeType == HtmlNodeType.Element)
-                {
-                    Console.WriteLine(nNode.Name);
-                }
-            }
-
-            // ancestor with matching name
-            var node6 = htmlDoc.DocumentNode.SelectSingleNode("//b");
-            foreach (var nNode in node6.Ancestors("body"))
-            {
-                if (nNode.NodeType == HtmlNodeType.Element)
-                {
-                    Console.WriteLine("Node name: " + nNode.Name);
-                    Console.WriteLine(nNode.InnerText);
-                }
-            }
-
-            // node6.Ancestors() -- ancs
-            // node6.Ancestors("body") -- ancs filtered
-            // node.AncestorsAndSelf() -- own self end ancs
-            // node.AncestorsAndSelf("p") -- own self end ancs filtered
-
-            // https://html-agility-pack.net/traversing
-            //Ancestors()  Gets all the ancestors of the node.
-            //Ancestors(String)   Gets ancestors with matching names.
-            //AncestorsAndSelf()  Gets all anscestor nodes and the current node.
-            //AncestorsAndSelf(String)    Gets all anscestor nodes and the current node with matching name.
-            //DescendantNodes Gets all descendant nodes for this node and each of child nodes
-            //DescendantNodesAndSelf  Returns a collection of all descendant nodes of this element, in document order
-            //Descendants()   Gets all descendant nodes in enumerated list
-            //Descendants(String) Get all descendant nodes with matching names
-            //DescendantsAndSelf()    Returns a collection of all descendant nodes of this element, in document order
-            //DescendantsAndSelf(String)  Gets all descendant nodes including this node
-            //Element Gets first generation child node matching name
-            //Elements    Gets matching first generation child nodes matching name
+            var result = await Task.WhenAll(rootUrls.Select(url => GetPageLinks(url, hostMatch, validatePages)));
+            return result.SelectMany(x => x).Distinct();
         }
+
+        static async Task<IEnumerable<string>> GetPageLinks(string formattedUrl, bool hostMatch = true, bool validatePages = true)
+        {
+            var htmlDocument = new HtmlDocument();
+
+            try
+            {
+                using (var client = new HttpClient())
+                    htmlDocument.Load(await client.GetStringAsync(formattedUrl));
+
+                return htmlDocument.DocumentNode
+                                   .Descendants("a")
+                                   .Select(a => a.GetAttributeValue("href", null))
+                                   .Where(u => !string.IsNullOrEmpty(u))
+                                   .Distinct();
+            }
+            catch
+            {
+                return Enumerable.Empty<string>();
+            }
+        }
+
+        async static Task<IEnumerable<string>> GetLinks(string url, bool hostMatch = true, bool validatePages = true, int level = 0)
+        {
+            if (level < 0)
+                throw new ArgumentOutOfRangeException(nameof(level));
+
+            string formattedUrl = url;
+
+            if (string.IsNullOrEmpty(formattedUrl))
+                return Enumerable.Empty<string>();
+
+            var rootUrls = await GetPageLinks(formattedUrl, hostMatch, validatePages);
+
+            if (level == 0)
+                return rootUrls;
+
+            var links = await GetAllPagesLinks(rootUrls, hostMatch, validatePages);
+
+            var tasks = await Task.WhenAll(links.Select(link => GetLinks(link, hostMatch, validatePages, --level)));
+
+            return tasks.SelectMany(l => l);
+        }
+
+        // third solution
+        public ISet<string> GetNewLinks(string content)
+        {
+            Regex regexLink = new Regex("(?<=<a\\s*?href=(?:'|\"))[^'\"]*?(?=(?:'|\"))");
+
+            ISet<string> newLinks = new HashSet<string>();
+            foreach (var match in regexLink.Matches(content))
+            {
+                if (!newLinks.Contains(match.ToString()))
+                    newLinks.Add(match.ToString());
+            }
+
+            return newLinks;
+        }
+
+        ////////////////////////////////////////////////////////////////////
+
     }
 }

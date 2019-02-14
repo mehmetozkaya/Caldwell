@@ -17,7 +17,7 @@ namespace Caldwell.Console
         public static void Main(string[] args)
         {
             var crawler = new CaldwellCrawler()
-                                    .AddRequest(new CaldwellRequest { Url = CrawlerConsts.CrawleUrl, TimeOut = 5000 })
+                                    .AddRequest(new CaldwellRequest { Url = CrawlerConsts.CrawleUrl, Regex = "", TimeOut = 5000 })
                                     .AddDownloader(new CaldwellDownloader { DownloderType = CaldwellDownloaderType.FromFile, DownloadPath = @"C:\caldwellcrawler\" })
                                     .AddProcessor(new CaldwellProcessor { })
                                     .AddScheduler(new CaldwellScheduler { })
