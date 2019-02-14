@@ -69,12 +69,12 @@ namespace Caldwell.Infrastructure.Crawler
             // Getlinks filtered by Regex
             //Request.Regex
 
+            var getall = GetLinks(Request.Url, true, true, 2);
 
 
-
-            var document = await Downloader.Download(Request.Url);
-            var catalog = await Processor.Process(document);
-            await Pipeline.Run(catalog);
+            //var document = await Downloader.Download(Request.Url);
+            //var catalog = await Processor.Process(document);
+            //await Pipeline.Run(catalog);
         }
 
 
@@ -84,7 +84,7 @@ namespace Caldwell.Infrastructure.Crawler
         // Get Urls //
         // https://codereview.stackexchange.com/questions/139783/web-crawler-that-uses-task-parallel-library
 
-        public static IEnumerable<string> getLinks(string url, bool hostMatch = true, bool validatePages = true, int level = 0)
+        public IEnumerable<string> getLinks(string url, bool hostMatch = true, bool validatePages = true, int level = 0)
         {
             string formattedUrl = url;
             if (string.IsNullOrEmpty(formattedUrl)) return Enumerable.Empty<string>();
@@ -98,9 +98,9 @@ namespace Caldwell.Infrastructure.Crawler
             return rootUrls;
         }
 
-        private static IEnumerable<string> getSinglePageLinks(string formattedUrl, bool hostMatch = true, bool validatePages = true)
+        private IEnumerable<string> getSinglePageLinks(string formattedUrl, bool hostMatch = true, bool validatePages = true)
         {
-
+            Console.WriteLine("getSinglePageLinks process : " + formattedUrl);
             HtmlDocument doc = new HtmlWeb().Load(formattedUrl);
             var linkedPages = doc.DocumentNode.Descendants("a")
                                                 .Select(a => a.GetAttributeValue("href", null))
@@ -112,13 +112,14 @@ namespace Caldwell.Infrastructure.Crawler
 
         }
 
-        private static IEnumerable<string> getManyPageLinks(IEnumerable<string> rootUrls, bool hostMatch, bool validatePages)
+        private IEnumerable<string> getManyPageLinks(IEnumerable<string> rootUrls, bool hostMatch, bool validatePages)
         {
             List<Task> tasks = new List<Task>();
             List<List<string>> allLinks = new List<List<string>>();
 
             foreach (string rootUrl in rootUrls)
             {
+                Console.WriteLine("Task working for : " + rootUrl);
                 string rootUrlCopy = rootUrl; //required
                 var task = Task.Factory.StartNew(() =>
                 {
@@ -129,6 +130,7 @@ namespace Caldwell.Infrastructure.Crawler
                 tasks.Add(task);
                 allLinks.Add(task.Result.ToList());
             }
+            Console.WriteLine("Task finisged");
 
             Task.WaitAll(tasks.ToArray());
             return allLinks.SelectMany(x => x).Distinct();
@@ -136,20 +138,24 @@ namespace Caldwell.Infrastructure.Crawler
 
 
         // second solution
-        async static Task<IEnumerable<string>> GetAllPagesLinks(IEnumerable<string> rootUrls, bool hostMatch, bool validatePages)
+        private async Task<IEnumerable<string>> GetAllPagesLinks(IEnumerable<string> rootUrls, bool hostMatch, bool validatePages)
         {
             var result = await Task.WhenAll(rootUrls.Select(url => GetPageLinks(url, hostMatch, validatePages)));
             return result.SelectMany(x => x).Distinct();
         }
 
-        static async Task<IEnumerable<string>> GetPageLinks(string formattedUrl, bool hostMatch = true, bool validatePages = true)
+        private async Task<IEnumerable<string>> GetPageLinks(string formattedUrl, bool hostMatch = true, bool validatePages = true)
         {
             var htmlDocument = new HtmlDocument();
 
             try
             {
-                using (var client = new HttpClient())
-                    htmlDocument.Load(await client.GetStringAsync(formattedUrl));
+
+
+                var client = new HttpClient();
+                {
+                    // htmlDocument.Load(await client.GetStringAsync(formattedUrl));
+                }
 
                 return htmlDocument.DocumentNode
                                    .Descendants("a")
@@ -163,7 +169,7 @@ namespace Caldwell.Infrastructure.Crawler
             }
         }
 
-        async static Task<IEnumerable<string>> GetLinks(string url, bool hostMatch = true, bool validatePages = true, int level = 0)
+        private async Task<IEnumerable<string>> GetLinks(string url, bool hostMatch = true, bool validatePages = true, int level = 0)
         {
             if (level < 0)
                 throw new ArgumentOutOfRangeException(nameof(level));

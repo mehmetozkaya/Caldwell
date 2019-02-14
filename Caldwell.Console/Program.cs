@@ -24,8 +24,10 @@ namespace Caldwell.Console
                                     .AddPipeline(new CaldwellPipeline { });
 
             crawler.Crawle();
-            
-            //crawler.ReasonToSolve();
+
+            Task.WaitAll();
+
+            //crawler.ReasonToSolve();            
 
             //CatalogCreator creator = new CatalogCreator();
             //Task create = creator.Create();
