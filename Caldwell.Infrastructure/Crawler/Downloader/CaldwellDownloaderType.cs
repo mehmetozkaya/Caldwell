@@ -6,15 +6,15 @@
     public enum CaldwellDownloaderType
     {
         /// <summary>
-        /// download to local file
+        /// Download to local file
         /// </summary>
         FromFile,
         /// <summary>
-        /// without downloading to local
+        /// Without downloading to local file, download temp and directly use
         /// </summary>
         FromMemory,
         /// <summary>
-        /// read direct from web
+        /// Read direct from web
         /// </summary>
         FromWeb
     }

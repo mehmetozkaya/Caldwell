@@ -35,8 +35,7 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
                 case CaldwellDownloaderType.FromFile:
                     using (WebClient client = new WebClient())
                     {
-                        var uri = new Uri(crawlUrl);
-                        await client.DownloadFileTaskAsync(uri, _localFilePath);
+                        await client.DownloadFileTaskAsync(crawlUrl, _localFilePath);
                     }
                     return GetExistingFile(_localFilePath);
 
