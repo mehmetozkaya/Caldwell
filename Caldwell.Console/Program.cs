@@ -24,7 +24,7 @@ namespace Caldwell.Console
         {
 
             var crawler = new CaldwellCrawler()
-                                   .AddRequest(new CaldwellRequest { Url = CrawlerConsts.CrawleUrl, Regex = ".*akilli-telefonlar/.+", TimeOut = 5000 })
+                                   .AddRequest(new CaldwellRequest { Url = CrawlerConsts.CrawleUrl, Regex = @".*akilli-telefonlar/.+\.html", TimeOut = 5000 })
                                    .AddDownloader(new CaldwellDownloader { DownloderType = CaldwellDownloaderType.FromFile, DownloadPath = @"C:\caldwellcrawler\" })
                                    .AddProcessor(new CaldwellProcessor { })
                                    .AddScheduler(new CaldwellScheduler { })

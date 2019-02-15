@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -59,10 +60,13 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
         private void PrepareFilePath(string fileName)
         {
             var parts = fileName.Split('/');
+            parts = parts.Where(p => !string.IsNullOrWhiteSpace(p)).ToArray();
             var htmlpage = string.Empty;
             if (parts.Length > 0)
+            {
                 htmlpage = parts[parts.Length - 1];
-
+            }
+            
             _localFilePath = $"{DownloadPath}{htmlpage}";
         }
 

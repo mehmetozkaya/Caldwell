@@ -70,11 +70,15 @@ namespace Caldwell.Infrastructure.Crawler
             //Request.Regex
             
             var linkReader = new PageLinkReader(Request);
-            var links = await linkReader.GetLinks(Request.Url, 1);
+            var links = await linkReader.GetLinks(Request.Url, 0);
 
-            //var document = await Downloader.Download(Request.Url);
-            //var catalog = await Processor.Process(document);
-            //await Pipeline.Run(catalog);
+            foreach (var url in links)
+            {
+                var document = await Downloader.Download(url);
+                var catalog = await Processor.Process(document);
+                await Pipeline.Run(catalog);
+            }
+
         }
 
 
@@ -93,7 +97,10 @@ namespace Caldwell.Infrastructure.Crawler
         public PageLinkReader(ICaldwellRequest request)
         {
             _request = request;
-            _regex = new Regex(request.Regex);
+            if (!string.IsNullOrWhiteSpace(request.Regex))
+            {
+                _regex = new Regex(request.Regex);
+            }
         }
 
         public async Task<IEnumerable<string>> GetLinks(string url, int level = 0)
@@ -115,14 +122,6 @@ namespace Caldwell.Infrastructure.Crawler
 
         private async Task<IEnumerable<string>> GetPageLinks(string url, bool needMatch = true)
         {
-            if(needMatch)
-            {
-                if (!_regex.IsMatch(url))
-                {
-                    return Enumerable.Empty<string>();
-                }
-            }
-            
             try
             {
                 HtmlWeb web = new HtmlWeb();
@@ -134,7 +133,9 @@ namespace Caldwell.Infrastructure.Crawler
                                    .Where(u => !string.IsNullOrEmpty(u))
                                    .Distinct();
 
-                linkList = linkList.Where(x => _regex.IsMatch(x));
+                if(_regex != null)
+                    linkList = linkList.Where(x => _regex.IsMatch(x));
+
                 return linkList;
             }
             catch (Exception exception)
