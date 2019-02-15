@@ -64,7 +64,7 @@ namespace Caldwell.Infrastructure.Crawler
             return this;
         }
 
-        public async void Crawle()
+        public async Task Crawle()
         {
             
             Regex regexLink = new Regex(".*akilli-telefonlar/.+");
@@ -73,12 +73,12 @@ namespace Caldwell.Infrastructure.Crawler
             // Getlinks filtered by Regex
             //Request.Regex
 
-            var getall = GetLinks(Request.Url, true, true, 2);
+            //var getall = GetLinks(Request.Url, true, true, 2);
 
 
-            //var document = await Downloader.Download(Request.Url);
-            //var catalog = await Processor.Process(document);
-            //await Pipeline.Run(catalog);
+            var document = await Downloader.Download(Request.Url);
+            var catalog = await Processor.Process(document);
+            await Pipeline.Run(catalog);
         }
 
 

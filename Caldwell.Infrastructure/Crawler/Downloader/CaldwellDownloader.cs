@@ -21,7 +21,7 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
             // if exist dont download again
             PrepareFilePath(crawlUrl);
 
-            var existing = await GetExistingFile(_localFilePath);
+            var existing = GetExistingFile(_localFilePath);
             if (existing != null)
                 return existing;
 
@@ -36,24 +36,27 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
                     using (WebClient client = new WebClient()) // WebClient class inherits IDisposable
                     {
                         var uri = new Uri(crawlUrl);
-                        client.DownloadFileAsync(uri, _localFilePath);
+                        client.DownloadFileAsync(uri, _localFilePath);                        
                     }
-                    return await GetExistingFile(_localFilePath);
-                    
+                    return GetExistingFile(_localFilePath);
+
                 case CaldwellDownloaderType.FromMemory:
                     var htmlDocument = new HtmlDocument();
                     using (WebClient client = new WebClient()) // WebClient class inherits IDisposable
                     {
                         // Or you can get the file content without saving it
-                        string htmlCode = client.DownloadString(crawlUrl);
+                        string htmlCode = await client.DownloadStringTaskAsync(crawlUrl);
                         htmlDocument.LoadHtml(htmlCode);
                     }
                     return htmlDocument;
-                    
+
                 case CaldwellDownloaderType.FromWeb:
                     HtmlWeb web = new HtmlWeb();
                     return await web.LoadFromWebAsync(crawlUrl);
             }
+            
+            
+            
 
             throw new InvalidOperationException("Can not load html file from given source.");
         }
@@ -68,15 +71,15 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
             _localFilePath = $"{DownloadPath}{htmlpage}";
         }
 
-        private async Task<HtmlDocument> GetExistingFile(string fullPath)
+        private HtmlDocument GetExistingFile(string fullPath)
         {
             try
             {
                 var htmlDocument = new HtmlDocument();
-                await Task.Run(() => htmlDocument.Load(fullPath));
+                htmlDocument.Load(fullPath);
                 return htmlDocument;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
             }
             return null;

@@ -16,16 +16,21 @@ namespace Caldwell.Console
     {
         public static void Main(string[] args)
         {
+            MainAsync(args).Wait();
+            //System.Console.ReadLine();
+        }
+
+        static async Task MainAsync(string[] args)
+        {
+
             var crawler = new CaldwellCrawler()
-                                    .AddRequest(new CaldwellRequest { Url = CrawlerConsts.CrawleUrl, Regex = "", TimeOut = 5000 })
-                                    .AddDownloader(new CaldwellDownloader { DownloderType = CaldwellDownloaderType.FromFile, DownloadPath = @"C:\caldwellcrawler\" })
-                                    .AddProcessor(new CaldwellProcessor { })
-                                    .AddScheduler(new CaldwellScheduler { })
-                                    .AddPipeline(new CaldwellPipeline { });
+                                   .AddRequest(new CaldwellRequest { Url = CrawlerConsts.CrawleUrl, Regex = "", TimeOut = 5000 })
+                                   .AddDownloader(new CaldwellDownloader { DownloderType = CaldwellDownloaderType.FromMemory, DownloadPath = @"C:\caldwellcrawler\" })
+                                   .AddProcessor(new CaldwellProcessor { })
+                                   .AddScheduler(new CaldwellScheduler { })
+                                   .AddPipeline(new CaldwellPipeline { });
 
-            crawler.Crawle();
-
-            Task.WaitAll();
+            await crawler.Crawle();
 
             //crawler.ReasonToSolve();            
 
@@ -37,7 +42,9 @@ namespace Caldwell.Console
             // TODO
             // url isini coz
             // medium - youtube - eShopContainer_Crawler - scaffolding.
+
         }
+
     }
 
     public class CatalogCreator
