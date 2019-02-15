@@ -72,9 +72,9 @@ namespace Caldwell.Infrastructure.Crawler
             var linkReader = new PageLinkReader(Request);
             var links = await linkReader.GetLinks(0);
 
-            var document = await Downloader.Download(Request.Url);
-            var catalog = await Processor.Process(document);
-            await Pipeline.Run(catalog);
+            //var document = await Downloader.Download(Request.Url);
+            //var catalog = await Processor.Process(document);
+            //await Pipeline.Run(catalog);
         }
 
 
@@ -101,7 +101,6 @@ namespace Caldwell.Infrastructure.Crawler
 
             var rootUrls = await GetPageLinks();
 
-
             if (level == 0)
                 return rootUrls;
 
@@ -110,12 +109,10 @@ namespace Caldwell.Infrastructure.Crawler
 
         private async Task<IEnumerable<string>> GetPageLinks()
         {
-            var htmlDocument = new HtmlDocument();
-
             try
             {
-                using (var client = new HttpClient())
-                    htmlDocument.Load(await client.GetStringAsync(_request.Url));
+                HtmlWeb web = new HtmlWeb();
+                var htmlDocument =  await web.LoadFromWebAsync(_request.Url);
 
                 return htmlDocument.DocumentNode
                                    .Descendants("a")
@@ -123,7 +120,7 @@ namespace Caldwell.Infrastructure.Crawler
                                    .Where(u => !string.IsNullOrEmpty(u))
                                    .Distinct();
             }
-            catch
+            catch (Exception exception)
             {
                 return Enumerable.Empty<string>();
             }
