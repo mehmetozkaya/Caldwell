@@ -24,7 +24,7 @@ namespace Caldwell.Console
         {
 
             var crawler = new CaldwellCrawler()
-                                   .AddRequest(new CaldwellRequest { Url = CrawlerConsts.CrawleUrl, Regex = "", TimeOut = 5000 })
+                                   .AddRequest(new CaldwellRequest { Url = CrawlerConsts.CrawleUrl, Regex = ".*akilli-telefonlar/.+", TimeOut = 5000 })
                                    .AddDownloader(new CaldwellDownloader { DownloderType = CaldwellDownloaderType.FromFile, DownloadPath = @"C:\caldwellcrawler\" })
                                    .AddProcessor(new CaldwellProcessor { })
                                    .AddScheduler(new CaldwellScheduler { })
@@ -41,6 +41,7 @@ namespace Caldwell.Console
 
             // TODO
             // url isini coz
+            // add Entity type ekle -- entity ler T olarak gelsin
             // medium - youtube - eShopContainer_Crawler - scaffolding.
 
         }
