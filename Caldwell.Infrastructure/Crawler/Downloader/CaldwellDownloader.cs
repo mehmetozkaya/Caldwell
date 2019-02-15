@@ -52,7 +52,7 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
                     
                 case CaldwellDownloaderType.FromWeb:
                     HtmlWeb web = new HtmlWeb();
-                    return web.Load(crawlUrl);
+                    return await web.LoadFromWebAsync(crawlUrl);
             }
 
             throw new InvalidOperationException("Can not load html file from given source.");

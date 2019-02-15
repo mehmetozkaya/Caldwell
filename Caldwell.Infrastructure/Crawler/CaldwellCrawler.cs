@@ -66,6 +66,10 @@ namespace Caldwell.Infrastructure.Crawler
 
         public async void Crawle()
         {
+            
+            Regex regexLink = new Regex(".*akilli-telefonlar/.+");
+            // regexLink.Match()
+            
             // Getlinks filtered by Regex
             //Request.Regex
 
