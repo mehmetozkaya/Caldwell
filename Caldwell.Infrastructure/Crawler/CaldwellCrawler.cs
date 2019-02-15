@@ -70,7 +70,7 @@ namespace Caldwell.Infrastructure.Crawler
             //Request.Regex
             
             var linkReader = new PageLinkReader(Request);
-            var links = await linkReader.GetLinks(0);
+            var links = await linkReader.GetLinks(Request.Url, 1);
 
             //var document = await Downloader.Download(Request.Url);
             //var catalog = await Processor.Process(document);
@@ -96,20 +96,21 @@ namespace Caldwell.Infrastructure.Crawler
             _regex = new Regex(request.Regex);
         }
 
-        public async Task<IEnumerable<string>> GetLinks(int level = 0)
+        public async Task<IEnumerable<string>> GetLinks(string url, int level = 0)
         {
             if (level < 0)
                 throw new ArgumentOutOfRangeException(nameof(level));
 
-            var rootUrls = await GetPageLinks(_request.Url, false);
-            rootUrls = rootUrls.Where(x => _regex.IsMatch(x));
+            var rootUrls = await GetPageLinks(url, false);            
 
             if (level == 0)
                 return rootUrls;
 
             var links = await GetAllPagesLinks(rootUrls);            
 
-            return null;
+            --level;
+            var tasks = await Task.WhenAll(links.Select(link => GetLinks(link, level)));
+            return tasks.SelectMany(l => l);
         }
 
         private async Task<IEnumerable<string>> GetPageLinks(string url, bool needMatch = true)
@@ -127,11 +128,14 @@ namespace Caldwell.Infrastructure.Crawler
                 HtmlWeb web = new HtmlWeb();
                 var htmlDocument =  await web.LoadFromWebAsync(url);
 
-                return htmlDocument.DocumentNode
+                var linkList = htmlDocument.DocumentNode
                                    .Descendants("a")
                                    .Select(a => a.GetAttributeValue("href", null))
                                    .Where(u => !string.IsNullOrEmpty(u))
                                    .Distinct();
+
+                linkList = linkList.Where(x => _regex.IsMatch(x));
+                return linkList;
             }
             catch (Exception exception)
             {
