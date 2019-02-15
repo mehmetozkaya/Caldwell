@@ -33,18 +33,17 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
             switch (DownloderType)
             {
                 case CaldwellDownloaderType.FromFile:
-                    using (WebClient client = new WebClient()) // WebClient class inherits IDisposable
+                    using (WebClient client = new WebClient())
                     {
                         var uri = new Uri(crawlUrl);
-                        client.DownloadFileAsync(uri, _localFilePath);                        
+                        await client.DownloadFileTaskAsync(uri, _localFilePath);
                     }
                     return GetExistingFile(_localFilePath);
 
                 case CaldwellDownloaderType.FromMemory:
                     var htmlDocument = new HtmlDocument();
-                    using (WebClient client = new WebClient()) // WebClient class inherits IDisposable
-                    {
-                        // Or you can get the file content without saving it
+                    using (WebClient client = new WebClient())
+                    {                        
                         string htmlCode = await client.DownloadStringTaskAsync(crawlUrl);
                         htmlDocument.LoadHtml(htmlCode);
                     }
@@ -55,9 +54,6 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
                     return await web.LoadFromWebAsync(crawlUrl);
             }
             
-            
-            
-
             throw new InvalidOperationException("Can not load html file from given source.");
         }
 
@@ -79,7 +75,7 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
                 htmlDocument.Load(fullPath);
                 return htmlDocument;
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
             }
             return null;

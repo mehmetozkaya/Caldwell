@@ -25,14 +25,14 @@ namespace Caldwell.Console
 
             var crawler = new CaldwellCrawler()
                                    .AddRequest(new CaldwellRequest { Url = CrawlerConsts.CrawleUrl, Regex = "", TimeOut = 5000 })
-                                   .AddDownloader(new CaldwellDownloader { DownloderType = CaldwellDownloaderType.FromMemory, DownloadPath = @"C:\caldwellcrawler\" })
+                                   .AddDownloader(new CaldwellDownloader { DownloderType = CaldwellDownloaderType.FromFile, DownloadPath = @"C:\caldwellcrawler\" })
                                    .AddProcessor(new CaldwellProcessor { })
                                    .AddScheduler(new CaldwellScheduler { })
                                    .AddPipeline(new CaldwellPipeline { });
 
             await crawler.Crawle();
 
-            //crawler.ReasonToSolve();            
+            //crawler.ReasonToSolve();
 
             //CatalogCreator creator = new CatalogCreator();
             //Task create = creator.Create();
