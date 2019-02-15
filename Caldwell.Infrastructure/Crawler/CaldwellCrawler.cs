@@ -89,9 +89,11 @@ namespace Caldwell.Infrastructure.Crawler
     public class PageLinkReader
     {
         private readonly ICaldwellRequest _request;
+        private readonly Regex _regex;
         public PageLinkReader(ICaldwellRequest request)
         {
             _request = request;
+            _regex = new Regex(request.Regex);
         }
 
         public async Task<IEnumerable<string>> GetLinks(int level = 0)
@@ -99,20 +101,31 @@ namespace Caldwell.Infrastructure.Crawler
             if (level < 0)
                 throw new ArgumentOutOfRangeException(nameof(level));
 
-            var rootUrls = await GetPageLinks();
+            var rootUrls = await GetPageLinks(_request.Url, false);
+            rootUrls = rootUrls.Where(x => _regex.IsMatch(x));
 
             if (level == 0)
                 return rootUrls;
 
+            var links = await GetAllPagesLinks(rootUrls);            
+
             return null;
         }
 
-        private async Task<IEnumerable<string>> GetPageLinks()
+        private async Task<IEnumerable<string>> GetPageLinks(string url, bool needMatch = true)
         {
+            if(needMatch)
+            {
+                if (!_regex.IsMatch(url))
+                {
+                    return Enumerable.Empty<string>();
+                }
+            }
+            
             try
             {
                 HtmlWeb web = new HtmlWeb();
-                var htmlDocument =  await web.LoadFromWebAsync(_request.Url);
+                var htmlDocument =  await web.LoadFromWebAsync(url);
 
                 return htmlDocument.DocumentNode
                                    .Descendants("a")
@@ -124,6 +137,13 @@ namespace Caldwell.Infrastructure.Crawler
             {
                 return Enumerable.Empty<string>();
             }
+        }
+
+        private async Task<IEnumerable<string>> GetAllPagesLinks(IEnumerable<string> rootUrls)
+        {            
+            var result = await Task.WhenAll(rootUrls.Select(url => GetPageLinks(url)));
+
+            return result.SelectMany(x => x).Distinct();
         }
     }
 }
