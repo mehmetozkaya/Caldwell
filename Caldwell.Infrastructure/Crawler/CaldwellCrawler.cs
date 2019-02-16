@@ -4,13 +4,8 @@ using Caldwell.Infrastructure.Crawler.Pipeline;
 using Caldwell.Infrastructure.Crawler.Processor;
 using Caldwell.Infrastructure.Crawler.Request;
 using Caldwell.Infrastructure.Crawler.Scheduler;
-using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Caldwell.Infrastructure.Crawler
@@ -67,7 +62,7 @@ namespace Caldwell.Infrastructure.Crawler
         public async Task Crawle()
         {
             
-            var linkReader = new PageLinkReader(Request);
+            var linkReader = new CaldwellPageLinkReader(Request);
             var links = await linkReader.GetLinks(Request.Url, 0);
 
             foreach (var url in links)
@@ -82,71 +77,5 @@ namespace Caldwell.Infrastructure.Crawler
 
 
             
-    }
-
-
-    ////////////////////////////////////////////////////////////////////
-    // Get Urls //
-    // https://codereview.stackexchange.com/questions/139783/web-crawler-that-uses-task-parallel-library    
-    public class PageLinkReader
-    {
-        private readonly ICaldwellRequest _request;
-        private readonly Regex _regex;
-        public PageLinkReader(ICaldwellRequest request)
-        {
-            _request = request;
-            if (!string.IsNullOrWhiteSpace(request.Regex))
-            {
-                _regex = new Regex(request.Regex);
-            }
-        }
-
-        public async Task<IEnumerable<string>> GetLinks(string url, int level = 0)
-        {
-            if (level < 0)
-                throw new ArgumentOutOfRangeException(nameof(level));
-
-            var rootUrls = await GetPageLinks(url, false);            
-
-            if (level == 0)
-                return rootUrls;
-
-            var links = await GetAllPagesLinks(rootUrls);            
-
-            --level;
-            var tasks = await Task.WhenAll(links.Select(link => GetLinks(link, level)));
-            return tasks.SelectMany(l => l);
-        }
-
-        private async Task<IEnumerable<string>> GetPageLinks(string url, bool needMatch = true)
-        {
-            try
-            {
-                HtmlWeb web = new HtmlWeb();
-                var htmlDocument =  await web.LoadFromWebAsync(url);
-
-                var linkList = htmlDocument.DocumentNode
-                                   .Descendants("a")
-                                   .Select(a => a.GetAttributeValue("href", null))
-                                   .Where(u => !string.IsNullOrEmpty(u))
-                                   .Distinct();
-
-                if(_regex != null)
-                    linkList = linkList.Where(x => _regex.IsMatch(x));
-
-                return linkList;
-            }
-            catch (Exception exception)
-            {
-                return Enumerable.Empty<string>();
-            }
-        }
-
-        private async Task<IEnumerable<string>> GetAllPagesLinks(IEnumerable<string> rootUrls)
-        {            
-            var result = await Task.WhenAll(rootUrls.Select(url => GetPageLinks(url)));
-
-            return result.SelectMany(x => x).Distinct();
-        }
     }
 }
