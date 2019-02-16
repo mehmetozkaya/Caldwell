@@ -66,8 +66,6 @@ namespace Caldwell.Infrastructure.Crawler
 
         public async Task Crawle()
         {
-            // Getlinks filtered by Regex
-            //Request.Regex
             
             var linkReader = new PageLinkReader(Request);
             var links = await linkReader.GetLinks(Request.Url, 0);
@@ -83,13 +81,13 @@ namespace Caldwell.Infrastructure.Crawler
 
 
 
-        ////////////////////////////////////////////////////////////////////
-
-        // Get Urls //
-        // https://codereview.stackexchange.com/questions/139783/web-crawler-that-uses-task-parallel-library        
+            
     }
 
 
+    ////////////////////////////////////////////////////////////////////
+    // Get Urls //
+    // https://codereview.stackexchange.com/questions/139783/web-crawler-that-uses-task-parallel-library    
     public class PageLinkReader
     {
         private readonly ICaldwellRequest _request;
