@@ -24,10 +24,11 @@ namespace Caldwell.Infrastructure.Crawler
         public ICaldwellProcessor Processor { get; private set; }
         public ICaldwellScheduler Scheduler { get; private set; }
         public ICaldwellPipeline Pipeline { get; private set; }
+        public System.Type Entity { get; set; }
 
         public CaldwellCrawler()
         {
-        }
+        }       
 
         public CaldwellCrawler AddRequest(ICaldwellRequest request)
         {
@@ -59,6 +60,12 @@ namespace Caldwell.Infrastructure.Crawler
             return this;
         }
 
+        public CaldwellCrawler AddEntityType<TEntity>()
+        {
+            Entity = typeof(TEntity);
+            return this;
+        }
+
         public async Task Crawle()
         {
             
@@ -71,11 +78,6 @@ namespace Caldwell.Infrastructure.Crawler
                 var catalog = await Processor.Process(document);
                 await Pipeline.Run(catalog);
             }
-
         }
-
-
-
-            
     }
 }

@@ -43,7 +43,7 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
                 case CaldwellDownloaderType.FromMemory:
                     var htmlDocument = new HtmlDocument();
                     using (WebClient client = new WebClient())
-                    {                        
+                    {
                         string htmlCode = await client.DownloadStringTaskAsync(crawlUrl);
                         htmlDocument.LoadHtml(htmlCode);
                     }
