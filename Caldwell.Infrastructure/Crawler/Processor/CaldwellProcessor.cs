@@ -61,9 +61,9 @@ namespace Caldwell.Infrastructure.Crawler.Processor
                 prop.SetValue(obj, value, null);
         }
 
-        public static Dictionary<string, string> GetPropertyAttributes()
+        public static Dictionary<string, Tuple<SelectorType, string>> GetPropertyAttributes()
         {
-            var attributeDictionary = new Dictionary<string, string>();
+            var attributeDictionary = new Dictionary<string, Tuple<SelectorType, string>>();
 
             PropertyInfo[] props = typeof(TEntity).GetProperties();
             var propList = props.Where(p => p.CustomAttributes.Count() > 0);
@@ -72,9 +72,10 @@ namespace Caldwell.Infrastructure.Crawler.Processor
             {
                 var attr = prop.GetCustomAttribute<CaldwellFieldAttribute>();
                 if(attr != null)
-                    attributeDictionary.Add(prop.Name, attr.XPath);
+                {
+                    attributeDictionary.Add(prop.Name, Tuple.Create(attr.SelectorType, attr.Expression));                 
+                }                    
             }
-
             return attributeDictionary;
         }
 
@@ -82,30 +83,7 @@ namespace Caldwell.Infrastructure.Crawler.Processor
 
         // future
         // you can create custom attributes on Entity class and properties which stores xpaths
-        // as per these atributes create entities with value of crawler's data
-        public static Dictionary<string, string> GetCustomAttributes()
-        {
-            Dictionary<string, string> _dict = new Dictionary<string, string>();
-
-            PropertyInfo[] props = typeof(TEntity).GetProperties();
-            foreach (PropertyInfo prop in props)
-            {
-                object[] attrs = prop.GetCustomAttributes(true);
-                foreach (object attr in attrs)
-                {
-                    var authAttr = attr as CustomAttribute;
-                    if (authAttr != null)
-                    {
-                        string propName = prop.Name;
-                        string auth = authAttr.Name;
-
-                        _dict.Add(propName, auth);
-                    }
-                }
-            }
-
-            return _dict;
-        }
+        // as per these atributes create entities with value of crawler's data       
 
 
 
