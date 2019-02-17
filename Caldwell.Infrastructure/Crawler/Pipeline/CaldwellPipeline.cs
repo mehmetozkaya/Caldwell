@@ -22,7 +22,7 @@ namespace Caldwell.Infrastructure.Crawler.Pipeline
             foreach (var entity in entityList)
             {
                 await _repository.CreateAsync(entity);
-            }            
+            }
         }
     }
 }

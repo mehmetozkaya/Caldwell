@@ -30,13 +30,20 @@ namespace Caldwell.Infrastructure.Crawler.Processor
             var node2 = mainSpecsNode.QuerySelector("div.row.row1");
 
 
+            // reflection
             object instance = Activator.CreateInstance(typeof(TEntity));
             TrySetProperty(instance, "Name", "new swn");
+            TrySetProperty(instance, "CatalogBrandId", 1);
+            TrySetProperty(instance, "CatalogTypeId", 1);
 
             var list = new List<TEntity>();
-            list.Add(instance as TEntity);            
+            list.Add(instance as TEntity);
 
             return list;
+
+            // future
+            // you can create custom attributes on Entity class and properties which stores xpaths
+            // as per these atributes create entities with value of crawler's data
         }
 
         private void TrySetProperty(object obj, string property, object value)
@@ -46,6 +53,33 @@ namespace Caldwell.Infrastructure.Crawler.Processor
                 prop.SetValue(obj, value, null);
         }
 
+
+        // future
+        // you can create custom attributes on Entity class and properties which stores xpaths
+        // as per these atributes create entities with value of crawler's data
+        public static Dictionary<string, string> GetCustomAttributes()
+        {
+            Dictionary<string, string> _dict = new Dictionary<string, string>();
+
+            PropertyInfo[] props = typeof(TEntity).GetProperties();
+            foreach (PropertyInfo prop in props)
+            {
+                object[] attrs = prop.GetCustomAttributes(true);
+                foreach (object attr in attrs)
+                {
+                    var authAttr = attr as CustomAttribute;
+                    if (authAttr != null)
+                    {
+                        string propName = prop.Name;
+                        string auth = authAttr.Name;
+
+                        _dict.Add(propName, auth);
+                    }
+                }
+            }
+
+            return _dict;
+        }
 
 
 
@@ -179,5 +213,10 @@ namespace Caldwell.Infrastructure.Crawler.Processor
             //Elements    Gets matching first generation child nodes matching name
         }
 
+    }
+
+    public class CustomAttribute : Attribute
+    {
+        public string Name { get; set; }
     }
 }
