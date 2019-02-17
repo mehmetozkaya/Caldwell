@@ -1,10 +1,11 @@
-﻿using Caldwell.Core.Repository;
+﻿using Caldwell.Core.Attributes;
+using Caldwell.Core.Repository;
 using System;
 using System.Collections.Generic;
 
 namespace Caldwell.Infrastructure.Models
 {
-    
+    [CaldwellEntity(XPath = "asd")]
     public partial class Catalog : IEntity
     {
         public Catalog()
@@ -13,6 +14,8 @@ namespace Caldwell.Infrastructure.Models
         }
 
         public int Id { get; set; }
+
+        [CaldwellField(XPath = "asd")]
         public string Name { get; set; }
         public string Slug { get; set; }
         public string Description { get; set; }

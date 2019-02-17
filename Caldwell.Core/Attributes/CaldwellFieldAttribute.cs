@@ -6,6 +6,6 @@ namespace Caldwell.Core.Attributes
 {
     public class CaldwellFieldAttribute : Attribute
     {
-
+        public string XPath { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Caldwell.Core.Repository;
+﻿using Caldwell.Core.Attributes;
+using Caldwell.Core.Repository;
 using Caldwell.Infrastructure.Models;
 using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
@@ -29,6 +30,13 @@ namespace Caldwell.Infrastructure.Crawler.Processor
             var mainSpecValues = mainSpecsNode.QuerySelectorAll("div.row.row2 a"); // go to div row row
             var node2 = mainSpecsNode.QuerySelector("div.row.row1");
 
+
+
+            var attr = (typeof(TEntity)).GetCustomAttribute<CaldwellEntityAttribute>();
+            var mainPath = attr.XPath;
+
+            var propertyList = GetPropertyAttributes();
+
             ///////////////////////////////////////
             // reflection to create entity
             object instance = Activator.CreateInstance(typeof(TEntity));
@@ -52,6 +60,24 @@ namespace Caldwell.Infrastructure.Crawler.Processor
             if (prop != null && prop.CanWrite)
                 prop.SetValue(obj, value, null);
         }
+
+        public static Dictionary<string, string> GetPropertyAttributes()
+        {
+            var attributeDictionary = new Dictionary<string, string>();
+
+            PropertyInfo[] props = typeof(TEntity).GetProperties();
+            var propList = props.Where(p => p.CustomAttributes.Count() > 0);
+
+            foreach (PropertyInfo prop in propList)
+            {
+                var attr = prop.GetCustomAttribute<CaldwellFieldAttribute>();
+                if(attr != null)
+                    attributeDictionary.Add(prop.Name, attr.XPath);
+            }
+
+            return attributeDictionary;
+        }
+
 
 
         // future
