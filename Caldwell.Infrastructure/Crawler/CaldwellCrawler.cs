@@ -24,7 +24,7 @@ namespace Caldwell.Infrastructure.Crawler
         public ICaldwellDownloader Downloader { get; private set; }
         public ICaldwellProcessor<TEntity> Processor { get; private set; }
         public ICaldwellScheduler Scheduler { get; private set; }
-        public ICaldwellPipeline<TEntity> Pipeline { get; private set; }        
+        public ICaldwellPipeline<TEntity> Pipeline { get; private set; }
 
         public CaldwellCrawler()
         {

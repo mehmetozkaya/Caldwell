@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace Caldwell.Infrastructure.Models
 {
+    
     public partial class Catalog : IEntity
     {
         public Catalog()
