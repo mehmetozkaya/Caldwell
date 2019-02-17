@@ -1,19 +1,21 @@
-﻿using Caldwell.Infrastructure.Models;
+﻿using Caldwell.Core.Repository;
+using Caldwell.Infrastructure.Models;
 using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Caldwell.Infrastructure.Crawler.Processor
 {
-    public class CaldwellProcessor : ICaldwellProcessor
+    public class CaldwellProcessor<TEntity> : ICaldwellProcessor<TEntity> where TEntity : class, IEntity
     {
-        public async Task<IEnumerable<Catalog>> Process(HtmlDocument document)
+        public async Task<IEnumerable<TEntity>> Process(HtmlDocument document)
         {            
             var titleNode = document.DocumentNode.SelectSingleNode("//*[@id='ozet']/div[1]/div/h1/a");
 
@@ -28,11 +30,24 @@ namespace Caldwell.Infrastructure.Crawler.Processor
             var node2 = mainSpecsNode.QuerySelector("div.row.row1");
 
 
-            return new List<Catalog>();
+            object instance = Activator.CreateInstance(typeof(TEntity));
+            TrySetProperty(instance, "Name", "new swn");
+
+            var list = new List<TEntity>();
+            list.Add(instance as TEntity);            
+
+            return list;
+        }
+
+        private void TrySetProperty(object obj, string property, object value)
+        {
+            var prop = obj.GetType().GetProperty(property, BindingFlags.Public | BindingFlags.Instance);
+            if (prop != null && prop.CanWrite)
+                prop.SetValue(obj, value, null);
         }
 
 
-        
+
 
 
         /////////////////////   EXAMPLE OF /////////////////////

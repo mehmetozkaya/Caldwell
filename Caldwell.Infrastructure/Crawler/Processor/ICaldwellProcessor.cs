@@ -1,4 +1,5 @@
-﻿using Caldwell.Infrastructure.Models;
+﻿using Caldwell.Core.Repository;
+using Caldwell.Infrastructure.Models;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
@@ -7,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace Caldwell.Infrastructure.Crawler.Processor
 {
-    public interface ICaldwellProcessor
+    public interface ICaldwellProcessor<TEntity> where TEntity : class, IEntity
     {
-        Task<IEnumerable<Catalog>> Process(HtmlDocument document);
+        Task<IEnumerable<TEntity>> Process(HtmlDocument document);
     }
 }

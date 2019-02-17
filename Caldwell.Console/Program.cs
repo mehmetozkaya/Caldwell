@@ -23,13 +23,11 @@ namespace Caldwell.Console
         static async Task MainAsync(string[] args)
         {
 
-            var crawler = new CaldwellCrawler()
+            var crawler = new CaldwellCrawler<Catalog>()
                                    .AddRequest(new CaldwellRequest { Url = CrawlerConsts.CrawleUrl, Regex = @".*akilli-telefonlar/.+\.html", TimeOut = 5000 })
                                    .AddDownloader(new CaldwellDownloader { DownloderType = CaldwellDownloaderType.FromFile, DownloadPath = @"C:\caldwellcrawler\" })
-                                   .AddProcessor(new CaldwellProcessor { })
-                                   .AddScheduler(new CaldwellScheduler { })
-                                   .AddPipeline(new CaldwellPipeline { })
-                                   .AddEntityType<Catalog>();
+                                   .AddProcessor(new CaldwellProcessor<Catalog> { })
+                                   .AddPipeline(new CaldwellPipeline<Catalog> { });
 
             await crawler.Crawle();
 

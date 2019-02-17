@@ -1,4 +1,5 @@
 ﻿using Caldwell.Core.Crawler;
+using Caldwell.Core.Repository;
 using Caldwell.Infrastructure.Crawler.Downloader;
 using Caldwell.Infrastructure.Crawler.Pipeline;
 using Caldwell.Infrastructure.Crawler.Processor;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Caldwell.Infrastructure.Crawler
 {
-    public class CaldwellCrawler : ICaldwellCrawler
+    public class CaldwellCrawler<TEntity> : ICaldwellCrawler where TEntity : class, IEntity
     {
         // Crawler Steps -- visual -> https://github.com/dotnetcore/DotnetSpider
         // Add Request - Url
@@ -21,50 +22,44 @@ namespace Caldwell.Infrastructure.Crawler
 
         public ICaldwellRequest Request { get; private set; }
         public ICaldwellDownloader Downloader { get; private set; }
-        public ICaldwellProcessor Processor { get; private set; }
+        public ICaldwellProcessor<TEntity> Processor { get; private set; }
         public ICaldwellScheduler Scheduler { get; private set; }
-        public ICaldwellPipeline Pipeline { get; private set; }
+        public ICaldwellPipeline<TEntity> Pipeline { get; private set; }
         public System.Type Entity { get; set; }
 
         public CaldwellCrawler()
         {
-        }       
+        }
 
-        public CaldwellCrawler AddRequest(ICaldwellRequest request)
+        public CaldwellCrawler<TEntity> AddRequest(ICaldwellRequest request)
         {
             Request = request;
             return this;
         }
 
-        public CaldwellCrawler AddDownloader(ICaldwellDownloader downloader)
+        public CaldwellCrawler<TEntity> AddDownloader(ICaldwellDownloader downloader)
         {
             Downloader = downloader;            
             return this;
         }
 
-        public CaldwellCrawler AddProcessor(ICaldwellProcessor processor)
+        public CaldwellCrawler<TEntity> AddProcessor(ICaldwellProcessor<TEntity> processor)
         {
             Processor = processor;
             return this;
         }
 
-        public CaldwellCrawler AddScheduler(ICaldwellScheduler scheduler)
+        public CaldwellCrawler<TEntity> AddScheduler(ICaldwellScheduler scheduler)
         {
             Scheduler = scheduler;
             return this;
         }
 
-        public CaldwellCrawler AddPipeline(ICaldwellPipeline pipeline)
+        public CaldwellCrawler<TEntity> AddPipeline(ICaldwellPipeline<TEntity> pipeline)
         {
             Pipeline = pipeline;
             return this;
-        }
-
-        public CaldwellCrawler AddEntityType<TEntity>()
-        {
-            Entity = typeof(TEntity);
-            return this;
-        }
+        }     
 
         public async Task Crawle()
         {

@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace Caldwell.Infrastructure.Crawler.Pipeline
 {
-    public class CaldwellPipeline : ICaldwellPipeline
+    public class CaldwellPipeline<TEntity> : ICaldwellPipeline<TEntity> where TEntity : class, IEntity
     {
-        private readonly IGenericRepository<Catalog> _repository;
+        private readonly IGenericRepository<TEntity> _repository;
 
         public CaldwellPipeline()
         {
-            _repository = new GenericRepository<Catalog>();
+            _repository = new GenericRepository<TEntity>();
         }
 
-        public async Task Run(IEnumerable<Catalog> entityList)
+        public async Task Run(IEnumerable<TEntity> entityList)
         {
             foreach (var entity in entityList)
             {
