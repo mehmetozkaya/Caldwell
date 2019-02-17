@@ -14,10 +14,29 @@ namespace Caldwell.Infrastructure.Crawler.Processor
     {
         public async Task<IEnumerable<TEntity>> Process(HtmlDocument document)
         {
+            var processorEntityList = new List<TEntity>();
+
+            var processorEntity = ReflectionHelper.CreateNewEntity<TEntity>();
+            var nameValueDictionary = GetColumnNameValuePairs(document);
+
+            foreach (var pair in nameValueDictionary)
+            {
+                ReflectionHelper.TrySetProperty(processorEntity, pair.Key, pair.Value);
+            }
+
+            processorEntityList.Add(processorEntity as TEntity);
+
+            return processorEntityList;
+        }
+
+        private static Dictionary<string, string> GetColumnNameValuePairs(HtmlDocument document)
+        {
+            var columnNameValueDictionary = new Dictionary<string, string>();
+
             var entityExpression = ReflectionHelper.GetEntityExpression<TEntity>();
             var propertyExpressions = ReflectionHelper.GetPropertyAttributes<TEntity>();
 
-            var titleNode = document.DocumentNode.SelectSingleNode(entityExpression);
+            var entityNode = document.DocumentNode.SelectSingleNode(entityExpression);
 
             foreach (var expression in propertyExpressions)
             {
@@ -28,22 +47,25 @@ namespace Caldwell.Infrastructure.Crawler.Processor
                 switch (expression.Value.Item1)
                 {
                     case SelectorType.XPath:
-                        var node = titleNode.SelectSingleNode(fieldExpression);
+                        var node = entityNode.SelectSingleNode(fieldExpression);
                         if (node != null)
                             columnValue = node.InnerText;
                         break;
                     case SelectorType.CssSelector:
-                        var nodeCss = titleNode.QuerySelector(fieldExpression);
+                        var nodeCss = entityNode.QuerySelector(fieldExpression);
                         if (nodeCss != null)
                             columnValue = nodeCss.InnerText;
                         break;
                     default:
                         break;
                 }
+
+                columnNameValueDictionary.Add(columnName, columnValue);
             }
 
-            return new List<TEntity>();
+            return columnNameValueDictionary;
         }
+
         public async Task<IEnumerable<TEntity>> Process_Test(HtmlDocument document)
         {            
             var titleNode = document.DocumentNode.SelectSingleNode("//*[@id='ozet']/div[1]/div/h1/a");
@@ -68,9 +90,9 @@ namespace Caldwell.Infrastructure.Crawler.Processor
             ///////////////////////////////////////
             // reflection to create entity
             object instance = Activator.CreateInstance(typeof(TEntity));
-            TrySetProperty(instance, "Name", "new swn");
-            TrySetProperty(instance, "CatalogBrandId", 1);
-            TrySetProperty(instance, "CatalogTypeId", 1);
+            //TrySetProperty(instance, "Name", "new swn");
+            //TrySetProperty(instance, "CatalogBrandId", 1);
+            //TrySetProperty(instance, "CatalogTypeId", 1);
 
             var list = new List<TEntity>();
             list.Add(instance as TEntity);
@@ -81,13 +103,7 @@ namespace Caldwell.Infrastructure.Crawler.Processor
             // you can create custom attributes on Entity class and properties which stores xpaths
             // as per these atributes create entities with value of crawler's data
         }
-
-        private void TrySetProperty(object obj, string property, object value)
-        {
-            var prop = obj.GetType().GetProperty(property, BindingFlags.Public | BindingFlags.Instance);
-            if (prop != null && prop.CanWrite)
-                prop.SetValue(obj, value, null);
-        }
+       
 
       
 
@@ -260,6 +276,18 @@ namespace Caldwell.Infrastructure.Crawler.Processor
             return attributeDictionary;
         }
 
+        internal static object CreateNewEntity<TEntity>()
+        {
+            object instance = Activator.CreateInstance(typeof(TEntity));
+            return instance;
+        }
+
+        internal static void TrySetProperty(object obj, string property, object value)
+        {
+            var prop = obj.GetType().GetProperty(property, BindingFlags.Public | BindingFlags.Instance);
+            if (prop != null && prop.CanWrite)
+                prop.SetValue(obj, value, null);
+        }
     }
   
 }
