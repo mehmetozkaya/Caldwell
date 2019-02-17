@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Caldwell.Infrastructure.Models
 {
-    [CaldwellEntity(XPath = "asd")]
+    [CaldwellEntity(XPath = "//*[@id='ozet']")]
     public partial class Catalog : IEntity
     {
         public Catalog()
@@ -15,7 +15,7 @@ namespace Caldwell.Infrastructure.Models
 
         public int Id { get; set; }
 
-        [CaldwellField(XPath = "asd")]
+        [CaldwellField(Expression = "//*[@id='ozet']/div[1]/div/h1/a(text)", SelectorType =SelectorType.XPath)]
         public string Name { get; set; }
         public string Slug { get; set; }
         public string Description { get; set; }

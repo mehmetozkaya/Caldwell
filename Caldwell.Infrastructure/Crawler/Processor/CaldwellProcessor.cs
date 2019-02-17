@@ -1,15 +1,11 @@
 ﻿using Caldwell.Core.Attributes;
 using Caldwell.Core.Repository;
-using Caldwell.Infrastructure.Models;
 using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Caldwell.Infrastructure.Crawler.Processor
@@ -17,6 +13,38 @@ namespace Caldwell.Infrastructure.Crawler.Processor
     public class CaldwellProcessor<TEntity> : ICaldwellProcessor<TEntity> where TEntity : class, IEntity
     {
         public async Task<IEnumerable<TEntity>> Process(HtmlDocument document)
+        {
+            var entityExpression = ReflectionHelper.GetEntityExpression<TEntity>();
+            var propertyExpressions = ReflectionHelper.GetPropertyAttributes<TEntity>();
+
+            var titleNode = document.DocumentNode.SelectSingleNode(entityExpression);
+
+            foreach (var expression in propertyExpressions)
+            {
+                var columnName = expression.Key;
+                var columnValue = string.Empty;
+                var fieldExpression = expression.Value.Item2;
+
+                switch (expression.Value.Item1)
+                {
+                    case SelectorType.XPath:
+                        var node = titleNode.SelectSingleNode(fieldExpression);
+                        if (node != null)
+                            columnValue = node.InnerText;
+                        break;
+                    case SelectorType.CssSelector:
+                        var nodeCss = titleNode.QuerySelector(fieldExpression);
+                        if (nodeCss != null)
+                            columnValue = nodeCss.InnerText;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return new List<TEntity>();
+        }
+        public async Task<IEnumerable<TEntity>> Process_Test(HtmlDocument document)
         {            
             var titleNode = document.DocumentNode.SelectSingleNode("//*[@id='ozet']/div[1]/div/h1/a");
 
@@ -35,7 +63,7 @@ namespace Caldwell.Infrastructure.Crawler.Processor
             var attr = (typeof(TEntity)).GetCustomAttribute<CaldwellEntityAttribute>();
             var mainPath = attr.XPath;
 
-            var propertyList = GetPropertyAttributes();
+            // var propertyList = GetPropertyAttributes();
 
             ///////////////////////////////////////
             // reflection to create entity
@@ -61,23 +89,7 @@ namespace Caldwell.Infrastructure.Crawler.Processor
                 prop.SetValue(obj, value, null);
         }
 
-        public static Dictionary<string, Tuple<SelectorType, string>> GetPropertyAttributes()
-        {
-            var attributeDictionary = new Dictionary<string, Tuple<SelectorType, string>>();
-
-            PropertyInfo[] props = typeof(TEntity).GetProperties();
-            var propList = props.Where(p => p.CustomAttributes.Count() > 0);
-
-            foreach (PropertyInfo prop in propList)
-            {
-                var attr = prop.GetCustomAttribute<CaldwellFieldAttribute>();
-                if(attr != null)
-                {
-                    attributeDictionary.Add(prop.Name, Tuple.Create(attr.SelectorType, attr.Expression));                 
-                }                    
-            }
-            return attributeDictionary;
-        }
+      
 
 
 
@@ -219,8 +231,35 @@ namespace Caldwell.Infrastructure.Crawler.Processor
 
     }
 
-    public class CustomAttribute : Attribute
+    public class ReflectionHelper
     {
-        public string Name { get; set; }
+        internal static string GetEntityExpression<TEntity>()
+        {
+            var entityAttribute = (typeof(TEntity)).GetCustomAttribute<CaldwellEntityAttribute>();
+            if (entityAttribute == null || string.IsNullOrWhiteSpace(entityAttribute.XPath))
+                throw new Exception("This entity should be xpath");
+
+            return entityAttribute.XPath;
+        }
+
+        public static Dictionary<string, Tuple<SelectorType, string>> GetPropertyAttributes<TEntity>()
+        {
+            var attributeDictionary = new Dictionary<string, Tuple<SelectorType, string>>();
+
+            PropertyInfo[] props = typeof(TEntity).GetProperties();
+            var propList = props.Where(p => p.CustomAttributes.Count() > 0);
+
+            foreach (PropertyInfo prop in propList)
+            {
+                var attr = prop.GetCustomAttribute<CaldwellFieldAttribute>();
+                if (attr != null)
+                {
+                    attributeDictionary.Add(prop.Name, Tuple.Create(attr.SelectorType, attr.Expression));
+                }
+            }
+            return attributeDictionary;
+        }
+
     }
+  
 }
