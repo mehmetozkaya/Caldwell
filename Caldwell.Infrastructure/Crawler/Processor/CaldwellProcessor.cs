@@ -29,8 +29,8 @@ namespace Caldwell.Infrastructure.Crawler.Processor
             var mainSpecValues = mainSpecsNode.QuerySelectorAll("div.row.row2 a"); // go to div row row
             var node2 = mainSpecsNode.QuerySelector("div.row.row1");
 
-
-            // reflection
+            ///////////////////////////////////////
+            // reflection to create entity
             object instance = Activator.CreateInstance(typeof(TEntity));
             TrySetProperty(instance, "Name", "new swn");
             TrySetProperty(instance, "CatalogBrandId", 1);
