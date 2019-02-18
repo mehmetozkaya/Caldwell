@@ -15,7 +15,7 @@ namespace Caldwell.Infrastructure.Crawler.Processor
         public async Task<IEnumerable<TEntity>> Process(HtmlDocument document)
         {
             var processorEntity = ReflectionHelper.CreateNewEntity<TEntity>();
-            var nameValueDictionary = GetColumnNameValuePairs(document);
+            var nameValueDictionary = GetColumnNameValuePairsFromHtml(document);
 
             foreach (var pair in nameValueDictionary)
             {
@@ -28,7 +28,7 @@ namespace Caldwell.Infrastructure.Crawler.Processor
             };            
         }
 
-        private static Dictionary<string, string> GetColumnNameValuePairs(HtmlDocument document)
+        private static Dictionary<string, string> GetColumnNameValuePairsFromHtml(HtmlDocument document)
         {
             var columnNameValueDictionary = new Dictionary<string, string>();
 
