@@ -66,7 +66,13 @@ namespace Caldwell.Infrastructure.Crawler.Downloader
             {
                 htmlpage = parts[parts.Length - 1];
             }
-            
+
+            if (!htmlpage.Contains(".html"))
+            {
+                htmlpage = htmlpage + ".html";
+            }
+            htmlpage = htmlpage.Replace("=", "").Replace("?", "");
+
             _localFilePath = $"{DownloadPath}{htmlpage}";
         }
 

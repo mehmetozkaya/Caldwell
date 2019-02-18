@@ -13,19 +13,23 @@ namespace Caldwell.Infrastructure.Crawler.Processor
     public class CaldwellProcessor<TEntity> : ICaldwellProcessor<TEntity> where TEntity : class, IEntity
     {
         public async Task<IEnumerable<TEntity>> Process(HtmlDocument document)
-        {
-            var processorEntity = ReflectionHelper.CreateNewEntity<TEntity>();
+        {            
             var nameValueDictionary = GetColumnNameValuePairsFromHtml(document);
 
+            var processorEntity = ReflectionHelper.CreateNewEntity<TEntity>();
             foreach (var pair in nameValueDictionary)
             {
                 ReflectionHelper.TrySetProperty(processorEntity, pair.Key, pair.Value);
             }
 
+            // TODO : Remove
+            ReflectionHelper.TrySetProperty(processorEntity, "CatalogTypeId", 1);
+            ReflectionHelper.TrySetProperty(processorEntity, "CatalogBrandId", 1);
+
             return new List<TEntity>
             {
                 processorEntity as TEntity
-            };            
+            };
         }
 
         private static Dictionary<string, string> GetColumnNameValuePairsFromHtml(HtmlDocument document)
@@ -102,17 +106,6 @@ namespace Caldwell.Infrastructure.Crawler.Processor
             // you can create custom attributes on Entity class and properties which stores xpaths
             // as per these atributes create entities with value of crawler's data
         }
-       
-
-      
-
-
-
-        // future
-        // you can create custom attributes on Entity class and properties which stores xpaths
-        // as per these atributes create entities with value of crawler's data       
-
-
 
 
         /////////////////////   EXAMPLE OF /////////////////////
@@ -242,50 +235,6 @@ namespace Caldwell.Infrastructure.Crawler.Processor
             //DescendantsAndSelf(String)  Gets all descendant nodes including this node
             //Element Gets first generation child node matching name
             //Elements    Gets matching first generation child nodes matching name
-        }
-
-    }
-
-    public class ReflectionHelper
-    {
-        internal static string GetEntityExpression<TEntity>()
-        {
-            var entityAttribute = (typeof(TEntity)).GetCustomAttribute<CaldwellEntityAttribute>();
-            if (entityAttribute == null || string.IsNullOrWhiteSpace(entityAttribute.XPath))
-                throw new Exception("This entity should be xpath");
-
-            return entityAttribute.XPath;
-        }
-
-        public static Dictionary<string, Tuple<SelectorType, string>> GetPropertyAttributes<TEntity>()
-        {
-            var attributeDictionary = new Dictionary<string, Tuple<SelectorType, string>>();
-
-            PropertyInfo[] props = typeof(TEntity).GetProperties();
-            var propList = props.Where(p => p.CustomAttributes.Count() > 0);
-
-            foreach (PropertyInfo prop in propList)
-            {
-                var attr = prop.GetCustomAttribute<CaldwellFieldAttribute>();
-                if (attr != null)
-                {
-                    attributeDictionary.Add(prop.Name, Tuple.Create(attr.SelectorType, attr.Expression));
-                }
-            }
-            return attributeDictionary;
-        }
-
-        internal static object CreateNewEntity<TEntity>()
-        {
-            object instance = Activator.CreateInstance(typeof(TEntity));
-            return instance;
-        }
-
-        internal static void TrySetProperty(object obj, string property, object value)
-        {
-            var prop = obj.GetType().GetProperty(property, BindingFlags.Public | BindingFlags.Instance);
-            if (prop != null && prop.CanWrite)
-                prop.SetValue(obj, value, null);
         }
     }
   
